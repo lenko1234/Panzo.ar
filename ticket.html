@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación de Pedido - PANZO</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #121212 0%, #2d2d2d 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #fff;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 3px solid #121212;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #EF233C;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #EF233C;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .status {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .status.error {
+            background: #f44336;
+        }
+
+        .total-section {
+            background: #121212;
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .total-label {
+            font-size: 1rem;
+            opacity: 0.7;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .total-amount {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #EF233C;
+            line-height: 1;
+        }
+
+        .items-list {
+            margin-bottom: 30px;
+        }
+
+        .item {
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 2px solid #121212;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 8px;
+        }
+
+        .item-name {
+            font-weight: 900;
+            color: #121212;
+            font-size: 1.1rem;
+        }
+
+        .item-qty {
+            background: #EF233C;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .item-variant {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .item-price {
+            color: #EF233C;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #121212;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #EF233C;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Panzo</div>
+            <div class="subtitle">Validación de Pedido</div>
+        </div>
+
+        <div id="content">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Validando pedido...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Precios reales del sistema (base de datos local)
+        const PRECIOS_REALES = {
+            // Sándwiches
+            1: { // PANZO ORIGINAL
+                'Focaccia XXL (26cm)': 12999,
+                'Ciabatta': 10999,
+                'Focaccia Clásica (20cm)': 10999
+            },
+            2: { // PANZO VEGGIE
+                'Focaccia XXL (26cm)': 10999,
+                'Ciabatta': 8999,
+                'Focaccia Clásica (20cm)': 8999
+            },
+            3: { // PANZO BRAVO
+                'Focaccia XXL (26cm)': 13999,
+                'Ciabatta': 11999,
+                'Focaccia Clásica (20cm)': 12999
+            },
+            4: { // PANZO PIG
+                'Focaccia XXL (26cm)': 14999,
+                'Ciabatta': 12999,
+                'Focaccia Clásica (20cm)': 12999
+            },
+            // Bebidas
+            5: { 'Unidad': 2000 },  // Coca Cola
+            6: { 'Unidad': 3000 },  // Corona
+            7: { 'Unidad': 15000 }  // Corona Pack
+        };
+
+        const NOMBRES_PRODUCTOS = {
+            1: 'PANZO ORIGINAL',
+            2: 'PANZO VEGGIE',
+            3: 'PANZO BRAVO',
+            4: 'PANZO PIG',
+            5: 'COCA COLA DE VIDRIO',
+            6: 'CERVEZA CORONA',
+            7: 'CORONA PACK x6'
+        };
+
+        function formatPrice(price) {
+            return price.toLocaleString('es-AR');
+        }
+
+        function validateOrder() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderParam = urlParams.get('order');
+
+            if (!orderParam) {
+                showError('No se encontró información del pedido');
+                return;
+            }
+
+            try {
+                // Decodificar Base64
+                const decodedJSON = decodeURIComponent(atob(orderParam));
+                const orderData = JSON.parse(decodedJSON);
+
+                // Recalcular precio real
+                let totalReal = 0;
+                const itemsValidados = [];
+
+                orderData.forEach(item => {
+                    const precioReal = PRECIOS_REALES[item.id]?.[item.variant];
+
+                    if (precioReal === undefined) {
+                        throw new Error(`Producto inválido: ID ${item.id}`);
+                    }
+
+                    const subtotal = precioReal * item.qty;
+                    totalReal += subtotal;
+
+                    itemsValidados.push({
+                        nombre: NOMBRES_PRODUCTOS[item.id],
+                        variante: item.variant,
+                        cantidad: item.qty,
+                        precioUnitario: precioReal,
+                        subtotal: subtotal,
+                        precioCliente: item.price // Precio que envió el cliente
+                    });
+                });
+
+                // Mostrar resultado
+                showValidatedOrder(itemsValidados, totalReal, orderData);
+
+            } catch (error) {
+                showError('Error al validar el pedido: ' + error.message);
+            }
+        }
+
+        function showValidatedOrder(items, totalReal, orderOriginal) {
+            // Calcular total que envió el cliente
+            const totalCliente = orderOriginal.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const hayDiscrepancia = totalReal !== totalCliente;
+
+            let html = `
+                <div class="status ${hayDiscrepancia ? 'error' : ''}">
+                    ${hayDiscrepancia ? '⚠️ ADVERTENCIA: Precios modificados' : '✅ Pedido Válido'}
+                </div>
+
+                <div class="total-section">
+                    <div class="total-label">Total Real Calculado</div>
+                    <div class="total-amount">$${formatPrice(totalReal)}</div>
+                </div>
+
+                <div class="items-list">
+                    <h3 style="color: #121212; margin-bottom: 15px;">Detalle del Pedido:</h3>
+            `;
+
+            items.forEach(item => {
+                const precioModificado = item.precioUnitario !== item.precioCliente;
+                html += `
+                    <div class="item">
+                        <div class="item-header">
+                            <div class="item-name">${item.nombre}</div>
+                            <div class="item-qty">x${item.cantidad}</div>
+                        </div>
+                        <div class="item-variant">${item.variante}</div>
+                        <div class="item-price">
+                            $${formatPrice(item.subtotal)}
+                            ${precioModificado ? `<span style="color: #f44336; font-size: 0.85rem;"> (⚠️ Precio modificado)</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+
+            if (hayDiscrepancia) {
+                html += `
+                    <div class="warning">
+                        <strong>⚠️ ALERTA DE SEGURIDAD</strong>
+                        El cliente modificó los precios en el mensaje de WhatsApp.
+                        <br><br>
+                        <strong>Total que envió el cliente:</strong> $${formatPrice(totalCliente)}<br>
+                        <strong>Total real del sistema:</strong> $${formatPrice(totalReal)}<br>
+                        <strong>Diferencia:</strong> $${formatPrice(Math.abs(totalReal - totalCliente))}
+                    </div>
+                `;
+            }
+
+            document.getElementById('content').innerHTML = html;
+        }
+
+        function showError(message) {
+            document.getElementById('content').innerHTML = `
+                <div class="status error">
+                    ❌ Error
+                </div>
+                <p style="color: #121212; text-align: center; padding: 20px;">
+                    ${message}
+                </p>
+            `;
+        }
+
+        // Ejecutar validación al cargar
+        window.addEventListener('DOMContentLoaded', validateOrder);
+    </script>
+</body>
+
+</html>

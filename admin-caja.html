@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Caja - PANZO</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #EF233C;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #EF233C;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .analyzer-section {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #EF233C;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .textarea-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            background: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #EF233C;
+        }
+
+        textarea::placeholder {
+            color: #666;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #EF233C 0%, #D90429 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .analyze-btn:active {
+            transform: scale(0.98);
+        }
+
+        .result-section {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 30px;
+            display: none;
+        }
+
+        .result-section.visible {
+            display: block;
+        }
+
+        .total-display {
+            background: linear-gradient(135deg, #EF233C 0%, #D90429 100%);
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(239, 35, 60, 0.3);
+        }
+
+        .total-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .total-amount {
+            font-size: 4.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .items-breakdown {
+            margin-bottom: 30px;
+        }
+
+        .breakdown-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            opacity: 0.7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #2a2a2a;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .item-variant {
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+
+        .item-price {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #EF233C;
+        }
+
+        .error-message {
+            background: #ff4444;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            padding: 20px;
+            background: #4CAF50;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .confirm-btn:active {
+            transform: scale(0.98);
+        }
+
+        .history {
+            margin-top: 40px;
+        }
+
+        .history-item {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #EF233C;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history-time {
+            font-size: 0.85rem;
+            opacity: 0.6;
+        }
+
+        .history-total {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #4CAF50;
+        }
+
+        .history-detail {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">PANZO</div>
+            <div class="subtitle">Admin Caja - Analizador de Pedidos</div>
+        </div>
+
+        <!-- Analizador -->
+        <div class="analyzer-section">
+            <div class="section-title">📋 Pegá el pedido de WhatsApp</div>
+            <div class="textarea-container">
+                <textarea id="order-input" placeholder="Hola, te encargo el siguiente pedido:
+
+2x PANZO ORIGINAL - Focaccia XXL
+1x PANZO VEGGIE - Ciabatta
+1x COCA COLA
+
+Gracias."></textarea>
+            </div>
+            <button class="analyze-btn" onclick="analyzeOrder()">CALCULAR PRECIO</button>
+        </div>
+
+        <!-- Resultado -->
+        <div class="result-section" id="result-section">
+            <div class="total-display">
+                <div class="total-label">Total a Cobrar</div>
+                <div class="total-amount" id="total-amount">$0</div>
+            </div>
+
+            <div class="items-breakdown">
+                <div class="breakdown-title">Detalle del pedido</div>
+                <div id="items-list"></div>
+            </div>
+
+            <button class="confirm-btn" onclick="confirmSale()">✅ CONFIRMAR VENTA</button>
+        </div>
+
+        <!-- Historial -->
+        <div class="history">
+            <div class="section-title">📊 Últimas Ventas</div>
+            <div id="history-list"></div>
+        </div>
+    </div>
+
+    <script>
+        // BASE DE DATOS DE PRECIOS
+        const PRECIOS = {
+            'PANZO ORIGINAL': {
+                'Focaccia XXL': 12999,
+                'Focaccia XXL (26cm)': 12999,
+                'Ciabatta': 10999,
+                'Focaccia Clásica': 10999,
+                'Focaccia Clásica (20cm)': 10999
+            },
+            'PANZO VEGGIE': {
+                'Focaccia XXL': 10999,
+                'Focaccia XXL (26cm)': 10999,
+                'Ciabatta': 8999,
+                'Focaccia Clásica': 8999,
+                'Focaccia Clásica (20cm)': 8999
+            },
+            'PANZO BRAVO': {
+                'Focaccia XXL': 13999,
+                'Focaccia XXL (26cm)': 13999,
+                'Ciabatta': 11999,
+                'Focaccia Clásica': 12999,
+                'Focaccia Clásica (20cm)': 12999
+            },
+            'PANZO PIG': {
+                'Focaccia XXL': 14999,
+                'Focaccia XXL (26cm)': 14999,
+                'Ciabatta': 12999,
+                'Focaccia Clásica': 12999,
+                'Focaccia Clásica (20cm)': 12999
+            },
+            'COCA COLA': { 'default': 2000 },
+            'COCA COLA DE VIDRIO': { 'default': 2000 },
+            'CORONA': { 'default': 3000 },
+            'CERVEZA CORONA': { 'default': 3000 },
+            'CORONA PACK x6': { 'default': 15000 },
+            'CORONA PACK X6': { 'default': 15000 }
+        };
+
+        let currentOrder = null;
+
+        function formatPrice(price) {
+            return price.toLocaleString('es-AR');
+        }
+
+        function analyzeOrder() {
+            const input = document.getElementById('order-input').value;
+            const resultSection = document.getElementById('result-section');
+
+            if (!input.trim()) {
+                alert('Por favor pegá el pedido de WhatsApp');
+                return;
+            }
+
+            try {
+                const items = parseOrder(input);
+
+                if (items.length === 0) {
+                    throw new Error('No se encontraron productos en el mensaje');
+                }
+
+                displayResult(items);
+                resultSection.classList.add('visible');
+
+            } catch (error) {
+                resultSection.innerHTML = `<div class="error-message">❌ ${error.message}</div>`;
+                resultSection.classList.add('visible');
+            }
+        }
+
+        function parseOrder(text) {
+            const items = [];
+            const lines = text.split('\n');
+
+            // Regex para capturar: 2x PANZO ORIGINAL - Focaccia XXL
+            const regex = /(\d+)x\s+([A-ZÁ-Ú\s]+?)(?:\s+-\s+([A-Za-zÁ-ú\s\d()]+))?$/i;
+
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.toLowerCase().includes('hola') || trimmed.toLowerCase().includes('gracias')) {
+                    continue;
+                }
+
+                const match = trimmed.match(regex);
+                if (match) {
+                    const cantidad = parseInt(match[1]);
+                    const producto = match[2].trim().toUpperCase();
+                    const variante = match[3] ? match[3].trim() : null;
+
+                    // Buscar precio
+                    let precio = 0;
+
+                    if (PRECIOS[producto]) {
+                        if (variante && PRECIOS[producto][variante]) {
+                            precio = PRECIOS[producto][variante];
+                        } else if (PRECIOS[producto]['default']) {
+                            precio = PRECIOS[producto]['default'];
+                        } else {
+                            throw new Error(`No se encontró precio para: ${producto} - ${variante}`);
+                        }
+                    } else {
+                        throw new Error(`Producto no reconocido: ${producto}`);
+                    }
+
+                    items.push({
+                        cantidad,
+                        producto,
+                        variante: variante || 'Unidad',
+                        precioUnitario: precio,
+                        subtotal: precio * cantidad
+                    });
+                }
+            }
+
+            return items;
+        }
+
+        function displayResult(items) {
+            const total = items.reduce((sum, item) => sum + item.subtotal, 0);
+
+            document.getElementById('total-amount').textContent = `$${formatPrice(total)}`;
+
+            const itemsList = document.getElementById('items-list');
+            itemsList.innerHTML = items.map(item => `
+                <div class="item-row">
+                    <div class="item-info">
+                        <div class="item-name">${item.cantidad}x ${item.producto}</div>
+                        <div class="item-variant">${item.variante}</div>
+                    </div>
+                    <div class="item-price">$${formatPrice(item.subtotal)}</div>
+                </div>
+            `).join('');
+
+            currentOrder = { items, total };
+        }
+
+        function confirmSale() {
+            if (!currentOrder) return;
+
+            const sale = {
+                timestamp: new Date().toISOString(),
+                items: currentOrder.items,
+                total: currentOrder.total
+            };
+
+            // Guardar en localStorage
+            const history = JSON.parse(localStorage.getItem('panzo_sales') || '[]');
+            history.unshift(sale);
+
+            if (history.length > 50) history.pop();
+
+            localStorage.setItem('panzo_sales', JSON.stringify(history));
+
+            // Limpiar y actualizar
+            document.getElementById('order-input').value = '';
+            document.getElementById('result-section').classList.remove('visible');
+            currentOrder = null;
+            renderHistory();
+
+            alert(`✅ Venta confirmada\n\nTotal: $${formatPrice(sale.total)}`);
+        }
+
+        function renderHistory() {
+            const history = JSON.parse(localStorage.getItem('panzo_sales') || '[]');
+            const container = document.getElementById('history-list');
+
+            if (history.length === 0) {
+                container.innerHTML = '<div class="empty-state">No hay ventas registradas</div>';
+                return;
+            }
+
+            container.innerHTML = history.slice(0, 10).map(sale => {
+                const date = new Date(sale.timestamp);
+                const timeStr = date.toLocaleString('es-AR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const detail = sale.items.map(item =>
+                    `${item.cantidad}x ${item.producto} (${item.variante})`
+                ).join(', ');
+
+                return `
+                    <div class="history-item">
+                        <div class="history-header">
+                            <div class="history-time">${timeStr}</div>
+                            <div class="history-total">$${formatPrice(sale.total)}</div>
+                        </div>
+                        <div class="history-detail">${detail}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Inicializar
+        renderHistory();
+    </script>
+</body>
+
+</html>

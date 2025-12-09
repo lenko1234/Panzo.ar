@@ -84,11 +84,6 @@
             overflow-x: hidden;
         }
 
-        /* Transiciones suaves para el push effect */
-        main,
-        .header {
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
 
         h1,
         h2,
@@ -564,20 +559,11 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
-            display: none;
-            /* Oculto en desktop */
         }
 
-        @media (max-width: 768px) {
-            .cart-overlay {
-                display: block;
-                /* Visible en mobile */
-            }
-
-            .cart-overlay.active {
-                opacity: 1;
-                visibility: visible;
-            }
+        .cart-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
         .cart-sidebar {
@@ -600,20 +586,6 @@
             transform: translateX(0);
         }
 
-        /* Push effect en desktop */
-        @media (min-width: 769px) {
-            body.cart-open {
-                overflow-x: hidden;
-            }
-
-            body.cart-open main {
-                transform: translateX(-450px);
-            }
-
-            body.cart-open .header {
-                transform: translateX(-450px);
-            }
-        }
 
         .cart-header {
             padding: var(--space-6);
@@ -1070,7 +1042,7 @@
                 <span class="cart-total-label">Total:</span>
                 <span class="cart-total-amount" id="cart-total">$0</span>
             </div>
-            <button class="cart-checkout-btn">
+            <button class="cart-checkout-btn" id="whatsapp-btn">
                 <i class="ph-bold ph-whatsapp-logo"></i> PEDIR POR WHATSAPP
             </button>
         </div>
@@ -1090,6 +1062,7 @@
     </footer>
     <script src="cart.js"></script>
     <script src="cart-connect.js"></script>
+    <script src="whatsapp.js"></script>
 
     <script>
         // --- DATA: Sanguches ---
