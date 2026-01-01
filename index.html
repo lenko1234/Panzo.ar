@@ -753,7 +753,7 @@
         }
 
         .cart-footer {
-            padding: var(--space-6);
+            padding: var(--space-4);
             border-top: var(--border-thick);
             background: var(--color-light);
         }
@@ -762,30 +762,30 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: var(--space-6);
+            margin-bottom: var(--space-3);
         }
 
         .cart-total-label {
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: 900;
             text-transform: uppercase;
             color: var(--color-dark);
         }
 
         .cart-total-amount {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 900;
             color: var(--color-brand);
         }
 
         .cart-checkout-btn {
             width: 100%;
-            padding: var(--space-4);
+            padding: var(--space-3);
             background: var(--color-brand);
             color: var(--color-white);
             border: var(--border-thick);
             border-radius: var(--radius-full);
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 900;
             text-transform: uppercase;
             cursor: pointer;
@@ -796,6 +796,32 @@
             transform: translateY(-4px);
             box-shadow: var(--shadow-pop);
             background: var(--color-brand-dark);
+        }
+
+        /* Botón vaciar carrito */
+        .cart-clear-btn {
+            width: 100%;
+            padding: var(--space-2);
+            background: transparent;
+            color: var(--color-dark);
+            border: 2px solid var(--color-dark);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+        }
+
+        .cart-clear-btn:hover {
+            background: var(--color-dark);
+            color: var(--color-white);
+            transform: translateY(-2px);
         }
 
         /* Badge del carrito en el header */
@@ -1056,6 +1082,9 @@
                 <span class="cart-total-label">Total:</span>
                 <span class="cart-total-amount" id="cart-total">$0</span>
             </div>
+            <button class="cart-clear-btn" id="clear-cart-btn">
+                <i class="ph-bold ph-trash"></i> VACIAR CARRITO
+            </button>
             <button class="cart-checkout-btn" id="whatsapp-btn">
                 <i class="ph-bold ph-whatsapp-logo"></i> PEDIR POR WHATSAPP
             </button>

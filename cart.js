@@ -81,12 +81,42 @@ class CartManager {
 
     // Persistencia
     saveCart() {
-        localStorage.setItem('panzo_cart', JSON.stringify(this.items));
+        const cartData = {
+            items: this.items,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('panzo_cart', JSON.stringify(cartData));
     }
 
     loadCart() {
         const saved = localStorage.getItem('panzo_cart');
-        return saved ? JSON.parse(saved) : {};
+        if (!saved) return {};
+
+        try {
+            const cartData = JSON.parse(saved);
+
+            // Si es formato antiguo (sin timestamp), migrar
+            if (!cartData.timestamp) {
+                return cartData;
+            }
+
+            // Verificar si han pasado más de 24 horas (86400000 ms)
+            const EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+            const now = Date.now();
+            const timePassed = now - cartData.timestamp;
+
+            if (timePassed > EXPIRATION_TIME) {
+                // Carrito expirado, limpiar
+                console.log('🗑️ Carrito limpiado automáticamente (más de 24 horas de inactividad)');
+                localStorage.removeItem('panzo_cart');
+                return {};
+            }
+
+            return cartData.items;
+        } catch (error) {
+            console.error('Error al cargar carrito:', error);
+            return {};
+        }
     }
 
     // Observer pattern
@@ -220,6 +250,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Sticky bar abre el carrito
     document.getElementById('sticky-cart-bar').addEventListener('click', toggleCart);
+
+    // Bot\u00f3n vaciar carrito
+    document.getElementById('clear-cart-btn').addEventListener('click', () => {
+        if (confirm('\u00bfEst\u00e1s seguro de que quer\u00e9s vaciar el carrito?')) {
+            cart.clearCart();
+        }
+    });
 
     // Renderizar carrito inicial
     renderCart();
