@@ -7,15 +7,28 @@
     <title>PANZO | Sándwiches & Focaccias</title>
     <meta name="description" content="Los sándwiches más grandes y ricos. Panzo es sabor real.">
 
-    <!-- Fuentes: Rubik (Bubbly/Redondo para el logo vibe) + Space Grotesk (Títulos) -->
+    <!-- Preconexiones para recursos críticos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+
+    <!-- Preload de fuente crítica para LCP -->
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&family=Space+Grotesk:wght@500;700;900&display=swap">
+
+    <!-- Fuentes con display=swap para evitar FOIT -->
     <link
         href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&family=Space+Grotesk:wght@500;700;900&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&family=Space+Grotesk:wght@500;700;900&display=swap"
+            rel="stylesheet">
+    </noscript>
 
-    <!-- Iconos Phosphor -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Iconos Phosphor (carga diferida) -->
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
     <style>
         /* --- 1. SISTEMA DE DISEÑO (GRILLA 8PT) --- */
@@ -988,7 +1001,8 @@
                 <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem;">Para acompañar</p>
             </div>
 
-            <div class="feed-grid" id="bebidas-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+            <div class="feed-grid" id="bebidas-grid"
+                style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
                 <!-- Las bebidas se generarán dinámicamente con JavaScript -->
             </div>
         </section>
@@ -1074,7 +1088,7 @@
                 icon: "ph-fill ph-hamburger",
                 gradient: "linear-gradient(135deg, var(--color-brand) 0%, var(--color-brand-dark) 100%)",
                 badge: "ORIGINAL",
-                image: "assets/6b1f2c7b-f472-4483-a613-a2ec12e86af8",
+                image: "assets/optimized/panzo-original.webp",
                 variants: [
                     { type: "Focaccia XXL (26cm)", price: 12999 },
                     { type: "Ciabatta", price: 10999 },
@@ -1087,7 +1101,7 @@
                 ingredients: "Pan de masa madre, salteado de vegetales, pesto de albahaca, mayonesa casera, queso tybo fundido, cebollas caramelizadas, lechuga mantecosa, tomates cherry confitados y rúcula.",
                 icon: "ph-fill ph-leaf",
                 gradient: "linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)",
-                image: "assets/45c0fe26-fcef-4ef9-b951-8a40d53c2d56",
+                image: "assets/optimized/panzo-veggie.webp",
                 variants: [
                     { type: "Focaccia XXL (26cm)", price: 10999 },
                     { type: "Ciabatta", price: 8999 },
@@ -1100,7 +1114,7 @@
                 ingredients: "Pan de masa madre, pollo desmenuzado a la mostaza, lechuga mantecosa, mayonesa casera, panceta, huevo y cebollas caramelizadas.",
                 icon: "ph-fill ph-fire",
                 gradient: "linear-gradient(135deg, #FF9800 0%, #F57C00 100%)",
-                image: "assets/864b98c0-5186-491d-ac97-0d827e2406a2",
+                image: "assets/optimized/panzo-bravo.webp",
                 variants: [
                     { type: "Focaccia XXL (26cm)", price: 13999 },
                     { type: "Ciabatta", price: 11999 },
@@ -1113,7 +1127,7 @@
                 ingredients: "Pan de masa madre, bondiola a la cerveza, zanahorias asadas, morrones asados, cebolla, cebolla de verdeo y mayonesa casera.",
                 icon: "ph-fill ph-beer-bottle",
                 gradient: "linear-gradient(135deg, #8B4513 0%, #5D2E0F 100%)",
-                image: "assets/91de9758-6863-409f-bbc5-39b2685bfaad",
+                image: "assets/optimized/panzo-pig.webp",
                 variants: [
                     { type: "Focaccia XXL (26cm)", price: 14999 },
                     { type: "Ciabatta", price: 12999 },
@@ -1128,7 +1142,7 @@
                 id: 5,
                 name: "COCA COLA DE VIDRIO",
                 description: "Coca Cola de vidrio de 237ml",
-                image: "assets/8f69b803-b864-438d-887c-4ffa8861853e",
+                image: "assets/optimized/coca-cola.webp",
                 price: 2000,
                 icon: "ph-fill ph-wine"
             },
@@ -1136,7 +1150,7 @@
                 id: 6,
                 name: "CERVEZA CORONA",
                 description: "Cerveza marca Corona 330cm3",
-                image: "assets/7f316142-b021-4584-a18c-a247f392b5fc",
+                image: "assets/optimized/corona.webp",
                 price: 3000,
                 icon: "ph-fill ph-beer-bottle"
             },
@@ -1144,7 +1158,7 @@
                 id: 7,
                 name: "CORONA PACK x6",
                 description: "Pack de cerveza marca Corona por 6 unidades",
-                image: "assets/48931749-4ff7-439f-b675-a4a1e9c5dcb0",
+                image: "assets/optimized/corona-pack.webp",
                 price: 15000,
                 badge: "PACK x6",
                 icon: "ph-fill ph-package"
@@ -1170,7 +1184,7 @@
 
                 // Determinar si usar imagen o gradiente
                 const imageContent = sanguche.image
-                    ? `<img src="${sanguche.image}" alt="${sanguche.name}" class="post-img" style="height: 100%; object-fit: cover;">`
+                    ? `<img src="${sanguche.image}" alt="${sanguche.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async">`
                     : `<div style="width: 100%; height: 100%; background: ${sanguche.gradient}; display: flex; align-items: center; justify-content: center;">
                             <i class="${sanguche.icon}" style="font-size: 8rem; color: var(--color-white); opacity: 0.3;"></i>
                        </div>`;
@@ -1253,12 +1267,12 @@
         // --- Renderizar Bebidas ---
         function renderBebidas() {
             const grid = document.getElementById('bebidas-grid');
-            
+
             bebidas.forEach((bebida, index) => {
                 const card = document.createElement('article');
                 card.className = 'post-card fade-in-up';
                 card.style.transitionDelay = `${(index + 1) * 100}ms`;
-                
+
                 card.innerHTML = `
                     <div class="post-header">
                         <div class="avatar-circle"></div>
@@ -1266,7 +1280,7 @@
                     </div>
                     <div class="post-img-container">
                         ${bebida.badge ? `<div class="badge-new">${bebida.badge}</div>` : ''}
-                        <img src="${bebida.image}" alt="${bebida.name}" class="post-img" style="height: 100%; object-fit: cover;">
+                        <img src="${bebida.image}" alt="${bebida.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async">
                     </div>
                     <div class="post-footer">
                         <div class="post-actions">
@@ -1287,7 +1301,7 @@
                         </button>
                     </div>
                 `;
-                
+
                 grid.appendChild(card);
             });
         }
