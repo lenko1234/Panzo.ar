@@ -346,7 +346,6 @@
             font-weight: 900;
             white-space: nowrap;
             text-transform: uppercase;
-            -webkit-text-stroke: 1px var(--color-dark);
             text-shadow: 2px 2px 0 var(--color-dark);
         }
 
@@ -427,11 +426,11 @@
 
         .featured-title {
             font-family: 'Bebas Neue', cursiva, sans-serif;
-            font-size: clamp(2.5rem, 12vw, 8rem);
-            line-height: 0.85;
+            font-size: clamp(3rem, 15vw, 10rem);
+            line-height: 0.8;
             text-transform: uppercase;
             margin-bottom: var(--space-4);
-            letter-spacing: -1px;
+            letter-spacing: 0.1em;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -440,7 +439,7 @@
 
         .featured-title span {
             color: var(--color-brand);
-            -webkit-text-stroke: 2px var(--color-dark);
+            -webkit-text-stroke: 1.5px var(--color-brand);
             opacity: 0;
             transform: translateY(30px) scale(0.9);
             transition: all 0.8s var(--ease-elastic);
