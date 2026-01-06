@@ -348,6 +348,135 @@
             color: var(--color-white);
         }
 
+        /* --- FEATURED BURGER (LAB STYLE) --- */
+        .featured-burger-section {
+            background-color: #e4e3e8;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            position: relative;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: var(--space-8);
+            margin-bottom: var(--space-12);
+            border: var(--border-thick);
+            box-shadow: var(--shadow-pop);
+        }
+
+        .featured-video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .featured-video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform: scale(0.9) translateY(-70px);
+        }
+
+        .featured-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: var(--space-6);
+            pointer-events: none;
+        }
+
+        .featured-content * {
+            pointer-events: auto;
+        }
+
+        .featured-title {
+            font-family: 'Rubik', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin-bottom: var(--space-4);
+            letter-spacing: -2px;
+            display: flex;
+            flex-direction: column;
+            color: var(--color-dark);
+        }
+
+        .featured-title span:last-child {
+            color: var(--color-brand);
+            -webkit-text-stroke: 2px var(--color-dark);
+        }
+
+        .featured-tagline {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            font-weight: 700;
+            color: var(--color-white);
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .featured-purchase-bar {
+            position: absolute;
+            bottom: var(--space-4);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-md);
+            border: var(--border-thick);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            z-index: 20;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .purchase-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-4);
+            margin-bottom: var(--space-1);
+        }
+
+        .featured-purchase-bar .variants-pills {
+            margin-bottom: 0;
+            display: flex;
+            gap: 6px;
+        }
+
+        .featured-purchase-bar .variant-pill {
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .featured-purchase-bar .price-display {
+            font-size: 1.8rem;
+            margin-top: 0;
+            color: var(--color-dark);
+            font-weight: 900;
+        }
+
+        .featured-purchase-bar .add-to-cart-btn {
+            margin-top: 0 !important;
+            padding: 12px !important;
+            font-size: 1.15rem !important;
+            background: var(--color-brand) !important;
+            color: white !important;
+            border: none !important;
+            width: 100%;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -1192,7 +1321,20 @@
 
         // --- DATA: Hamburguesas (ACTIVO) ---
         const hamburguesas = [
-            // Placeholder vacío - Agregar hamburguesas aquí
+            {
+                id: 101,
+                name: "LA TRAICIÓN",
+                ingredients: "Doble medallón de 120gr, bacon, doble cheddar por medallón, cebolla y nuestra salsa golf especial.",
+                icon: "ph-fill ph-hamburger",
+                badge: "LA NUEVA",
+                video: "assets/VideoBurgerNew.mp4",
+                bgColor: "#e4e3e8",
+                variants: [
+                    { type: "Simple", price: 8500 },
+                    { type: "Doble", price: 10500 },
+                    { type: "Triple", price: 12500 }
+                ]
+            }
         ];
 
         // --- DATA: Bebidas ---
@@ -1232,19 +1374,71 @@
         // --- Renderizar Hamburguesas ---
         function renderHamburguesas() {
             const grid = document.getElementById('hamburguesas-grid');
+            const placeholder = document.getElementById('hamburguesas-placeholder');
+
+            if (hamburguesas.length > 0) {
+                placeholder.style.display = 'none';
+            }
 
             hamburguesas.forEach((hamburguesa, index) => {
+                // Si la hamburguesa tiene video, la tratamos como destacada
+                if (hamburguesa.video) {
+                    const featured = document.createElement('div');
+                    featured.className = 'featured-burger-section fade-in-up';
+
+                    const initialPrice = hamburguesa.variants[0].price;
+
+                    featured.innerHTML = `
+                        <div class="featured-video-container">
+                            <video autoplay muted loop playsinline>
+                                <source src="${hamburguesa.video}" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="featured-content">
+                            <h2 class="featured-title">
+                                <span>LA</span>
+                                <span>${hamburguesa.name.split(' ')[1]}</span>
+                            </h2>
+                            <p class="featured-tagline">${hamburguesa.ingredients}</p>
+                        </div>
+                        
+                        <div class="featured-purchase-bar">
+                            <div class="purchase-row">
+                                <div class="variants-pills">
+                                    ${hamburguesa.variants.map((variant, vIndex) => `
+                                        <button 
+                                            class="variant-pill ${vIndex === 0 ? 'active' : ''}" 
+                                            data-sanguche-id="${hamburguesa.id}" 
+                                            data-variant-index="${vIndex}"
+                                            data-price="${variant.price}"
+                                        >
+                                            ${variant.type}
+                                        </button>
+                                    `).join('')}
+                                </div>
+                                <div class="price-display" data-price-display="${hamburguesa.id}">${formatPrice(initialPrice)}</div>
+                            </div>
+                            
+                            <button class="btn btn-outline add-to-cart-btn" data-product-id="${hamburguesa.id}" style="width: 100%;">
+                                <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
+                            </button>
+                        </div>
+                    `;
+
+                    // Insertamos el destacado antes del grid (o reemplazamos el inicio del menu)
+                    grid.parentNode.insertBefore(featured, grid);
+                    return; // No la agregamos al grid si ya es destacada
+                }
+
                 const card = document.createElement('article');
                 card.className = 'post-card fade-in-up';
                 card.style.transitionDelay = `${(index + 1) * 100}ms`;
 
-                // Precio inicial (primera variante)
+                // ... resto de la lógica para tarjetas normales ...
                 const initialPrice = hamburguesa.variants[0].price;
-
-                // Determinar si usar imagen o gradiente
                 const imageContent = hamburguesa.image
                     ? `<img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async">`
-                    : `<div style="width: 100%; height: 100%; background: ${hamburguesa.gradient}; display: flex; align-items: center; justify-content: center;">
+                    : `<div style="width: 100%; height: 100%; background: ${hamburguesa.gradient || 'var(--color-brand)'}; display: flex; align-items: center; justify-content: center;">
                             <i class="${hamburguesa.icon}" style="font-size: 8rem; color: var(--color-white); opacity: 0.3;"></i>
                        </div>`;
 
@@ -1268,12 +1462,11 @@
                         </p>
 
                         <div class="variants-container">
-                            <span class="variants-label">Elegí tu pan:</span>
                             <div class="variants-pills">
                                 ${hamburguesa.variants.map((variant, vIndex) => `
-                                    <button
-                                        class="variant-pill ${vIndex === 0 ? 'active' : ''}"
-                                        data-sanguche-id="${hamburguesa.id}"
+                                    <button 
+                                        class="variant-pill ${vIndex === 0 ? 'active' : ''}" 
+                                        data-sanguche-id="${hamburguesa.id}" 
                                         data-variant-index="${vIndex}"
                                         data-price="${variant.price}"
                                     >
@@ -1286,7 +1479,6 @@
                         <button class="btn btn-outline add-to-cart-btn" data-product-id="${hamburguesa.id}" style="width: 100%; margin-top: var(--space-4); font-size: 1rem; padding: 10px;">
                             <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
                         </button>
-                        </a>
                     </div>
                 `;
 

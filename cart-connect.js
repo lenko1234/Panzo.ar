@@ -3,12 +3,20 @@ function connectCartButtons() {
     // Guardar el estado de la variante seleccionada para cada producto
     const selectedVariants = {};
 
+    // Combinar todos los productos que tienen variantes para inicializar
+    const productsWithVariants = [
+        ...(typeof hamburguesas !== 'undefined' ? hamburguesas : []),
+        ...(typeof sanguches !== 'undefined' ? sanguches : []),
+        ...(typeof focacciasBackup !== 'undefined' ? focacciasBackup : [])
+    ];
+
     // Inicializar con la primera variante de cada producto
-    sanguches.forEach(s => {
-        selectedVariants[s.id] = 0; // índice de la primera variante
+    productsWithVariants.forEach(p => {
+        selectedVariants[p.id] = 0; // índice de la primera variante
     });
 
     // Actualizar cuando se selecciona una variante
+    // Usamos delegación o nos aseguramos de que existan
     document.querySelectorAll('.variant-pill').forEach(pill => {
         pill.addEventListener('click', (e) => {
             const productId = parseInt(e.currentTarget.dataset.sangucheId);
@@ -28,35 +36,40 @@ function connectCartButtons() {
 
             if (productType === 'bebida') {
                 // Es una bebida - no tiene variantes
-                product = bebidas.find(b => b.id === productId);
+                product = beveragesArray().find(b => b.id === productId);
                 variant = {
                     type: "Unidad",
-                    price: product.price
+                    price: product ? product.price : 0
                 };
             } else {
-                // Es un sanguche - tiene variantes de pan
-                product = sanguches.find(s => s.id === productId);
-                const variantIndex = selectedVariants[productId] || 0;
-                variant = product.variants[variantIndex];
+                // Es un sanguche o hamburguesa - tiene variantes de pan/tamaño
+                product = productsWithVariants.find(p => p.id === productId);
+
+                if (product) {
+                    const variantIndex = selectedVariants[productId] || 0;
+                    variant = product.variants[variantIndex];
+                }
             }
 
-            // Agregar al carrito
-            cart.addToCart(product, variant);
+            if (product && variant) {
+                // Agregar al carrito
+                cart.addToCart(product, variant);
 
-            // NO abrir el carrito automáticamente
-            // En mobile aparecerá el sticky bar
-            // En desktop el usuario puede abrir manualmente con el botón del header
+                // Feedback visual
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="ph-fill ph-check"></i> ¡AGREGADO!';
+                btn.classList.add('btn-success'); // O usar estilos inline como antes
 
-            // Feedback visual
-            btn.innerHTML = '<i class="ph-fill ph-check"></i> ¡AGREGADO!';
-            btn.style.background = 'var(--color-brand)';
-            btn.style.color = 'var(--color-white)';
-
-            setTimeout(() => {
-                btn.innerHTML = '<i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO';
-                btn.style.background = '';
-                btn.style.color = '';
-            }, 1500);
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.classList.remove('btn-success');
+                }, 1500);
+            }
         });
     });
+
+    // Helper para obtener bebidas
+    function beveragesArray() {
+        return typeof bebidas !== 'undefined' ? bebidas : [];
+    }
 }
