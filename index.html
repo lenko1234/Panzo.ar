@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PANZO | Sándwiches & Focaccias</title>
-    <meta name="description" content="Los sándwiches más grandes y ricos. Panzo es sabor real.">
+    <title>PANZO | Hamburguesas & Sándwiches</title>
+    <meta name="description" content="Las hamburguesas más grandes y ricas. Panzo es sabor real.">
 
     <!-- Preconexiones para recursos críticos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -966,7 +966,7 @@
                         <span>REAL.</span>
                     </h1>
                     <p class="hero-subtitle fade-in-up" style="transition-delay: 100ms">
-                        Sándwiches gigantes, focaccias que chorrean y tomates que saben a tomate.
+                        Hamburguesas gigantes, carne jugosa y tomates que saben a tomate.
                     </p>
                     <div class="fade-in-up" style="transition-delay: 200ms">
                         <a href="#menu" class="btn btn-primary">VER EL MENÚ</a>
@@ -998,11 +998,11 @@
         <div class="marquee">
             <div class="marquee-inner">
                 <span>• HECHO A MANO •</span>
-                <span>SÁNDWICHES DE VERDAD</span>
+                <span>HAMBURGUESAS DE VERDAD</span>
                 <span>• PANZAS FELICES •</span>
                 <span>MUCHO QUESO</span>
                 <span>• HECHO A MANO •</span>
-                <span>SÁNDWICHES DE VERDAD</span>
+                <span>HAMBURGUESAS DE VERDAD</span>
                 <span>• PANZAS FELICES •</span>
                 <span>MUCHO QUESO</span>
             </div>
@@ -1011,12 +1011,17 @@
         <!-- GRID DE PRODUCTOS -->
         <section id="menu" class="feed-section container">
             <div class="section-header">
-                <h2 class="fade-in-up">SÁNDWICHES DE AUTOR</h2>
-                <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem;">Focaccia y Ciabatta de masa madre</p>
+                <h2 class="fade-in-up">HAMBURGUESAS</h2>
+                <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem;">Carne de verdad, pan casero</p>
             </div>
 
-            <div class="feed-grid" id="sanguches-grid">
+            <div class="feed-grid" id="hamburguesas-grid">
                 <!-- Las tarjetas se generarán dinámicamente con JavaScript -->
+            </div>
+
+            <!-- Aviso si no hay hamburguesas cargadas -->
+            <div id="hamburguesas-placeholder" style="text-align: center; padding: var(--space-10) var(--space-6);">
+                <p style="opacity: 0.5; font-style: italic;">Nuevas burguers en camino...</p>
             </div>
         </section>
 
@@ -1030,6 +1035,26 @@
             <div class="feed-grid" id="bebidas-grid"
                 style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
                 <!-- Las bebidas se generarán dinámicamente con JavaScript -->
+            </div>
+        </section>
+
+        <!-- SECCIÓN FOCACCIAS PRÓXIMAMENTE -->
+        <section class="feed-section container" style="padding-top: var(--space-12);">
+            <div class="section-header">
+                <h2 class="fade-in-up">FOCACCIAS</h2>
+                <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem;">Próximamente</p>
+            </div>
+
+            <div style="text-align: center; padding: var(--space-20) var(--space-6);">
+                <div class="fade-in-up"
+                    style="max-width: 600px; margin: 0 auto; padding: var(--space-10); border: 3px dashed var(--color-dark); border-radius: var(--radius-lg); background: var(--color-light);">
+                    <i class="ph-fill ph-clock"
+                        style="font-size: 4rem; color: var(--color-brand); margin-bottom: var(--space-4);"></i>
+                    <h3 style="font-size: 2rem; margin-bottom: var(--space-4); color: var(--color-dark);">¡Vuelven
+                        Pronto!</h3>
+                    <p style="font-size: 1.1rem; color: var(--color-dark); opacity: 0.7;">Estamos preparando algo
+                        increíble. Nuestras focaccias de masa madre volverán mejor que nunca.</p>
+                </div>
             </div>
         </section>
 
@@ -1108,8 +1133,8 @@
     <script src="whatsapp.js"></script>
 
     <script>
-        // --- DATA: Sanguches ---
-        const sanguches = [
+        // --- DATA: Focaccias (BACKUP - Para usar cuando vuelvan) ---
+        const focacciasBackup = [
             {
                 id: 1,
                 name: "PANZO ORIGINAL",
@@ -1165,6 +1190,11 @@
             }
         ];
 
+        // --- DATA: Hamburguesas (ACTIVO) ---
+        const hamburguesas = [
+            // Placeholder vacío - Agregar hamburguesas aquí
+        ];
+
         // --- DATA: Bebidas ---
         const bebidas = [
             {
@@ -1199,23 +1229,23 @@
             return price.toLocaleString('es-AR');
         }
 
-        // --- Renderizar Sanguches ---
-        function renderSanguches() {
-            const grid = document.getElementById('sanguches-grid');
+        // --- Renderizar Hamburguesas ---
+        function renderHamburguesas() {
+            const grid = document.getElementById('hamburguesas-grid');
 
-            sanguches.forEach((sanguche, index) => {
+            hamburguesas.forEach((hamburguesa, index) => {
                 const card = document.createElement('article');
                 card.className = 'post-card fade-in-up';
                 card.style.transitionDelay = `${(index + 1) * 100}ms`;
 
                 // Precio inicial (primera variante)
-                const initialPrice = sanguche.variants[0].price;
+                const initialPrice = hamburguesa.variants[0].price;
 
                 // Determinar si usar imagen o gradiente
-                const imageContent = sanguche.image
-                    ? `<img src="${sanguche.image}" alt="${sanguche.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async">`
-                    : `<div style="width: 100%; height: 100%; background: ${sanguche.gradient}; display: flex; align-items: center; justify-content: center;">
-                            <i class="${sanguche.icon}" style="font-size: 8rem; color: var(--color-white); opacity: 0.3;"></i>
+                const imageContent = hamburguesa.image
+                    ? `<img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async">`
+                    : `<div style="width: 100%; height: 100%; background: ${hamburguesa.gradient}; display: flex; align-items: center; justify-content: center;">
+                            <i class="${hamburguesa.icon}" style="font-size: 8rem; color: var(--color-white); opacity: 0.3;"></i>
                        </div>`;
 
                 card.innerHTML = `
@@ -1224,7 +1254,7 @@
                         <span class="post-username">panzo.ar</span>
                     </div>
                     <div class="post-img-container">
-                        ${sanguche.badge ? `<div class="badge-new">${sanguche.badge}</div>` : ''}
+                        ${hamburguesa.badge ? `<div class="badge-new">${hamburguesa.badge}</div>` : ''}
                         ${imageContent}
                     </div>
                     <div class="post-footer">
@@ -1233,17 +1263,17 @@
                             <i class="ph ph-chat-circle"></i>
                         </div>
                         <p class="post-caption">
-                            <span style="font-weight: 900;">${sanguche.name}.</span>
-                            ${sanguche.ingredients}
+                            <span style="font-weight: 900;">${hamburguesa.name}.</span>
+                            ${hamburguesa.ingredients}
                         </p>
 
                         <div class="variants-container">
                             <span class="variants-label">Elegí tu pan:</span>
                             <div class="variants-pills">
-                                ${sanguche.variants.map((variant, vIndex) => `
+                                ${hamburguesa.variants.map((variant, vIndex) => `
                                     <button
                                         class="variant-pill ${vIndex === 0 ? 'active' : ''}"
-                                        data-sanguche-id="${sanguche.id}"
+                                        data-sanguche-id="${hamburguesa.id}"
                                         data-variant-index="${vIndex}"
                                         data-price="${variant.price}"
                                     >
@@ -1251,9 +1281,9 @@
                                     </button>
                                 `).join('')}
                             </div>
-                            <div class="price-display" data-price-display="${sanguche.id}">${formatPrice(initialPrice)}</div>
+                            <div class="price-display" data-price-display="${hamburguesa.id}">${formatPrice(initialPrice)}</div>
                         </div>
-                        <button class="btn btn-outline add-to-cart-btn" data-product-id="${sanguche.id}" style="width: 100%; margin-top: var(--space-4); font-size: 1rem; padding: 10px;">
+                        <button class="btn btn-outline add-to-cart-btn" data-product-id="${hamburguesa.id}" style="width: 100%; margin-top: var(--space-4); font-size: 1rem; padding: 10px;">
                             <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
                         </button>
                         </a>
@@ -1299,7 +1329,7 @@
 
             bebidas.forEach((bebida, index) => {
                 const card = document.createElement('article');
-                card.className = 'post-card fade-in-up';
+                card.className = 'post-card'; // Sin fade-in-up para asegurar visibilidad
                 card.style.transitionDelay = `${(index + 1) * 100}ms`;
 
                 card.innerHTML = `
@@ -1337,19 +1367,22 @@
 
         // --- Inicializar ---
         document.addEventListener('DOMContentLoaded', () => {
-            renderSanguches();
+            renderHamburguesas();
             renderBebidas();
-            console.log('Sanguches renderizados:', document.querySelectorAll('.post-card').length);
+            console.log('Productos renderizados:', document.querySelectorAll('.post-card').length);
             connectCartButtons();
 
-            // Re-observar elementos dinámicos
+            // Re-observar elementos dinámicos y forzar visibilidad inicial
             setTimeout(() => {
                 document.querySelectorAll('.fade-in-up').forEach(el => {
-                    if (!el.classList.contains('visible')) {
-                        observer.observe(el);
+                    observer.observe(el);
+                    // Forzamos un pequeño check para elementos ya visibles en pantalla
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < window.innerHeight) {
+                        el.classList.add('visible');
                     }
                 });
-            }, 100);
+            }, 150);
         });
 
         // --- Animaciones de Scroll ---

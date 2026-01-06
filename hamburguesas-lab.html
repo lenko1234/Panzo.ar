@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB: Hamburguesa Panzo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Rubik:wght@900&family=Space+Grotesk:wght@500;700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        :root {
+            --color-brand: #EF233C;
+            --color-brand-dark: #D90429;
+            --color-dark: #121212;
+            --color-white: #FFFFFF;
+            --color-accent: #FFD60A;
+
+            --space-2: 8px;
+            --space-4: 16px;
+            --space-6: 24px;
+            --space-10: 40px;
+            --space-20: 80px;
+
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #e4e3e8;
+            /* Color exacto del nuevo video */
+            color: var(--color-dark);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- BURGER HERO LAB --- */
+        .lab-hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #e4e3e8;
+            /* Evita barras negras */
+        }
+
+        /* Video de fondo premium */
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-color: #e4e3e8;
+            /* Fondo exacto para que coincida con el video */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transform: scale(0.85);
+            /* Quitamos filtros que oscurecen el blanco */
+        }
+
+        /* Overlay de gradiente para legibilidad */
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Sin gradientes que oscurezcan el fondo */
+            background: transparent;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Contenido Central */
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: var(--space-6);
+            max-width: 1000px;
+        }
+
+        .hero-title {
+            font-family: 'Rubik', sans-serif;
+            font-size: clamp(3rem, 15vw, 10rem);
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin-bottom: var(--space-4);
+            letter-spacing: -4px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .hero-title span:first-child {
+            color: var(--color-dark);
+        }
+
+        .hero-title span:last-child {
+            color: var(--color-brand);
+            -webkit-text-stroke: 4px var(--color-dark);
+            /* Borde más grueso estilo comic */
+        }
+
+        .hero-tagline {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 700;
+            margin-bottom: var(--space-10);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s var(--ease-out-expo) forwards 0.5s;
+            color: var(--color-white);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            /* Sombra más fuerte para que resalte sobre el fondo claro */
+        }
+
+        /* Botón Estilo "Pop" */
+        .buy-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-4);
+            background: var(--color-brand);
+            color: var(--color-white);
+            padding: var(--space-4) var(--space-8);
+            border-radius: 9999px;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 1.25rem;
+            border: 3px solid var(--color-white);
+            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s var(--ease-out-expo);
+            opacity: 0;
+            animation: fadeInUp 0.8s var(--ease-out-expo) forwards 0.8s;
+            position: relative;
+            z-index: 20;
+            /* Asegurar que esté sobre todo */
+            margin-top: var(--space-4);
+        }
+
+        .buy-btn:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px var(--color-accent);
+            background: var(--color-brand-dark);
+        }
+
+        /* --- CARACTERÍSTICAS (GLASSMORPHISM) --- */
+        .features-grid {
+            position: absolute;
+            bottom: var(--space-6);
+            /* Bajado más para dar aire */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: var(--space-4);
+            z-index: 5;
+            /* Menor z-index que el botón */
+            width: 95%;
+            max-width: 900px;
+        }
+
+        .feature-item {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            padding: var(--space-3);
+            /* Más chico */
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--color-brand);
+            text-align: center;
+            /* Centrado queda mejor para ingredientes */
+            opacity: 0;
+            animation: fadeInRight 0.8s var(--ease-out-expo) forwards;
+        }
+
+        .feature-item:nth-child(1) {
+            animation-delay: 1.2s;
+        }
+
+        .feature-item:nth-child(2) {
+            animation-delay: 1.4s;
+        }
+
+        .feature-item:nth-child(3) {
+            animation-delay: 1.6s;
+        }
+
+        .feature-item i {
+            font-size: 1.5rem;
+            /* Iconos más chicos */
+            color: var(--color-brand);
+            margin-bottom: var(--space-1);
+        }
+
+        .feature-item h3 {
+            font-size: 1rem;
+            /* Título más chico */
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+
+        .feature-item p {
+            font-size: 0.8rem;
+            /* Texto más chico */
+            opacity: 0.8;
+            line-height: 1.2;
+        }
+
+        /* --- ANIMACIONES --- */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* --- TITLES ENTRANCE --- */
+        .title-line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .title-line span {
+            display: block;
+            transform: translateY(100%);
+            animation: revealUp 1s var(--ease-out-expo) forwards;
+        }
+
+        @keyframes revealUp {
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .features-grid {
+                flex-direction: column;
+                bottom: 20px;
+                position: relative;
+                transform: none;
+                left: 0;
+                width: 100%;
+                padding: var(--space-6);
+            }
+
+            .lab-hero {
+                height: auto;
+                min-height: 100vh;
+                padding-top: var(--space-20);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <section class="lab-hero">
+        <!-- Video -->
+        <div class="video-container">
+            <video autoplay muted loop playsinline preload="auto">
+                <source src="assets/VideoBurgerNew.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="title-line"><span>LA</span></span>
+                <span class="title-line" style="animation-delay: 0.2s"><span>TRAICIÓN.</span></span>
+            </h1>
+            <p class="hero-tagline">Doble medallón de 120gr, bacon, doble cheddar por medallón, cebolla y nuestra salsa
+                golf especial.</p>
+
+            <a href="#" class="buy-btn">
+                <i class="ph-bold ph-shopping-cart-simple"></i>
+                ¡LA QUIERO YA!
+            </a>
+        </div>
+    </section>
+
+</body>
+
+</html>
