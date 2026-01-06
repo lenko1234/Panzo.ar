@@ -14,16 +14,11 @@
     <link rel="dns-prefetch" href="https://images.unsplash.com">
 
     <!-- Preload de fuente crítica para LCP -->
-    <link rel="preload" as="style"
-        href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&family=Space+Grotesk:wght@500;700;900&display=swap">
-
-    <!-- Fuentes con display=swap para evitar FOIT -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&family=Space+Grotesk:wght@500;700;900&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@500;700;900&display=swap"
         rel="stylesheet" media="print" onload="this.media='all'">
     <noscript>
         <link
-            href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;900&family=Space+Grotesk:wght@500;700;900&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@500;700;900&display=swap"
             rel="stylesheet">
     </noscript>
 
@@ -97,30 +92,30 @@
         }
 
         body {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
             background-color: var(--color-dark);
             color: var(--color-white);
-            line-height: 1.5;
+            line-height: 1.2;
+            letter-spacing: 0.03em;
         }
 
 
         h1,
         h2,
         h3 {
-            font-weight: 900;
+            font-family: 'Bebas Neue', cursiva, sans-serif;
+            font-weight: 400;
             line-height: 0.95;
-            letter-spacing: -0.04em;
+            letter-spacing: 0.02em;
             text-transform: uppercase;
         }
 
         /* Estilo para simular el logo "Panzo" burbujeante */
         .logo-text {
-            font-family: 'Rubik', sans-serif;
-            font-weight: 900;
-            font-style: italic;
-            letter-spacing: -0.05em;
-            text-transform: capitalize;
-            /* "Panzo" no todo mayusculas para que se vea mas redondo */
+            font-family: 'Bebas Neue', sans-serif;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
         img {
@@ -431,12 +426,12 @@
         }
 
         .featured-title {
-            font-family: 'Rubik', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 6rem);
-            line-height: 0.9;
+            font-family: 'Bebas Neue', cursiva, sans-serif;
+            font-size: clamp(2.5rem, 12vw, 8rem);
+            line-height: 0.85;
             text-transform: uppercase;
             margin-bottom: var(--space-4);
-            letter-spacing: -2px;
+            letter-spacing: -1px;
             display: flex;
             flex-direction: column;
             align-items: center;
