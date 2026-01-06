@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picnic Parallax: Mantel Infinito</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            background-color: #fdfdfd;
+            /* Altura mínima para asegurar que haya mucho scroll */
+            min-height: 300vh;
+        }
+
+        /* --- 1. MANTEL ROJO (Capa Profunda) --- */
+        /* Ahora usaremos background-attachment: fixed visualmente, pero lo animaremos con JS */
+        .pattern-gingham {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            /* Cubre siempre toda la pantalla */
+            z-index: -2;
+            background-color: white;
+            background-image:
+                linear-gradient(90deg, rgba(220, 38, 38, 0.4) 50%, transparent 50%),
+                linear-gradient(rgba(220, 38, 38, 0.4) 50%, transparent 50%);
+            background-size: 60px 60px;
+            /* La magia: esto asegura que el patrón se repita infinitamente */
+            background-repeat: repeat;
+        }
+
+        /* --- 2. CAPA SANGUCHES --- */
+        #layer-mid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            /* Permitimos que los elementos hijos se salgan del viewport visualmente */
+            overflow: visible;
+        }
+
+        /* Estilo para los Sanguches Flotantes */
+        .floating-sandwich {
+            position: absolute;
+            filter: drop-shadow(0 15px 15px rgba(0, 0, 0, 0.15));
+            will-change: transform;
+        }
+
+        /* UI */
+        .btn-emerald {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-emerald:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+    <!-- CAPA 1: EL MANTEL (Fondo Fijo) -->
+    <div id="layer-back" class="pattern-gingham"></div>
+
+    <!-- CAPA 2: LOS SANGUCHES -->
+    <div id="layer-mid"></div>
+
+    <!-- CAPA 3: CONTENIDO -->
+    <main class="relative z-10 pb-40">
+
+        <!-- Hero Section -->
+        <section class="min-h-screen flex flex-col items-center justify-center text-center px-4">
+            <div
+                class="bg-white/95 backdrop-blur-xl p-10 rounded-3xl shadow-2xl max-w-2xl border-b-8 border-emerald-500 transform transition-transform hover:scale-105 duration-500">
+                <div
+                    class="mb-4 inline-block bg-red-100 text-red-600 px-4 py-1 rounded-full text-sm font-bold tracking-wide uppercase">
+                    Non-stop Picnic
+                </div>
+                <h1 class="text-6xl font-extrabold text-gray-900 mb-4 tracking-tight leading-tight">
+                    Mantel <span class="text-red-600">Infinito</span>
+                </h1>
+                <p class="text-xl text-gray-600 mb-8 font-light">
+                    Ahora el patrón se regenera matemáticamente. Nunca se acaba el mantel, sin importar cuánto bajes.
+                </p>
+                <button
+                    class="btn-emerald text-white px-8 py-4 rounded-full font-bold text-lg shadow-lg flex items-center gap-2 mx-auto">
+                    <span>Probar Scroll</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 animate-bounce" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Espaciador para demostrar el scroll largo -->
+        <section class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto space-y-40">
+
+                <!-- Tarjeta 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border-l-4 border-red-500 relative">
+                    <h2 class="text-3xl font-bold mb-4">Punto de Control 1</h2>
+                    <p class="text-gray-600 text-lg">
+                        Sigue bajando. Observa que el mantel se mueve suavemente pero nunca ves un borde blanco al
+                        final.
+                    </p>
+                </div>
+
+                <!-- Tarjeta 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border-l-4 border-emerald-500 relative">
+                    <h2 class="text-3xl font-bold mb-4">Punto de Control 2</h2>
+                    <p class="text-gray-600 text-lg">
+                        Los sándwiches ahora están distribuidos en un área vertical mucho mayor (400% de la pantalla),
+                        por lo que aparecen con más "aire" entre ellos.
+                    </p>
+                </div>
+
+                <!-- Tarjeta 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-xl border-l-4 border-red-500 relative">
+                    <h2 class="text-3xl font-bold mb-4">Punto de Control 3</h2>
+                    <p class="text-gray-600 text-lg">
+                        ¡Todavía hay mantel! La propiedad `background-position-y` hace el trabajo sucio.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <footer class="bg-gray-900 text-white py-24 text-center mt-40 relative">
+            <h3 class="text-3xl font-bold mb-2">Fin del Camino</h3>
+            <p class="text-emerald-400">Pero el mantel podría seguir para siempre...</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- 1. SVG DEL SANGUCHE (Optimizado) ---
+        function getSandwichSVG(width) {
+            return `
+            <svg width="${width}" height="${width}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="50" cy="85" rx="40" ry="10" fill="black" fill-opacity="0.2"/>
+                <path d="M10 65 Q 10 80 50 80 Q 90 80 90 65 L 90 55 Q 50 70 10 55 Z" fill="#eab308"/>
+                <path d="M10 65 L 10 55 Q 50 70 90 55 L 90 65" stroke="#ca8a04" stroke-width="2" fill="none"/>
+                <path d="M8 55 Q 20 65 35 55 T 65 55 T 92 55" stroke="#10b981" stroke-width="8" stroke-linecap="round" fill="none"/>
+                <rect x="15" y="48" width="70" height="6" rx="3" fill="#ef4444"/>
+                <path d="M12 45 L 88 45 L 88 50 L 12 50 Z" fill="#facc15"/>
+                <path d="M80 50 L 88 58 L 75 50" fill="#facc15"/>
+                <path d="M10 45 Q 10 15 50 15 Q 90 15 90 45 Z" fill="#eab308"/>
+                <path d="M30 30 Q 35 35 40 30" stroke="#ca8a04" stroke-width="2" stroke-linecap="round"/>
+                <path d="M50 25 Q 55 30 60 25" stroke="#ca8a04" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            `;
+        }
+
+        // --- 2. GENERACIÓN ESPACIADA ---
+        const midLayer = document.getElementById('layer-mid');
+        // Reducimos la cantidad total y aumentamos el espacio
+        const sandwichCount = 8;
+        // Definimos un rango vertical muy alto (4 veces la pantalla) para dispersarlos
+        const verticalSpread = 400;
+
+        for (let i = 0; i < sandwichCount; i++) {
+            const el = document.createElement('div');
+            el.classList.add('floating-sandwich');
+
+            const size = Math.floor(Math.random() * 80) + 100; // 100px a 180px
+
+            // Distribución vertical controlada:
+            // Dividimos el espacio en secciones para asegurar separación
+            const sectionHeight = verticalSpread / sandwichCount;
+            // Posición base de la sección + aleatoriedad dentro de la sección
+            const topPos = (i * sectionHeight) + (Math.random() * (sectionHeight * 0.6));
+
+            // Alternar izquierda/derecha para balancear visualmente
+            const isLeft = i % 2 === 0;
+            const leftPos = isLeft ? Math.random() * 30 : 60 + Math.random() * 30; // 0-30% o 60-90%
+
+            el.style.left = leftPos + '%';
+            el.style.top = topPos + '%'; // Usamos % relativo al viewport inicial, luego se mueve con parallax
+
+            const rotation = Math.random() * 360;
+            el.style.transform = `rotate(${rotation}deg)`;
+            el.innerHTML = getSandwichSVG(size);
+
+            el.dataset.initialRotation = rotation;
+            // Usamos un factor de velocidad negativo para que suban al hacer scroll (efecto flotante inverso)
+            // o positivo para que bajen más lento/rápido.
+            el.dataset.speedFactor = 0.2 + (Math.random() * 0.1);
+
+            midLayer.appendChild(el);
+        }
+
+        // --- 3. LOGICA PARALLAX INFINITA ---
+        const layerBack = document.getElementById('layer-back');
+        const sandwiches = document.querySelectorAll('.floating-sandwich');
+
+        function updateParallax() {
+            const scrollY = window.scrollY;
+
+            // TRUCO DEL MANTEL INFINITO:
+            // En vez de mover todo el DIV (transform), solo movemos la posición del patrón de fondo.
+            // Como el gradiente se repite, esto es infinito.
+            // Multiplicamos por 0.5 para que vaya a mitad de velocidad que el scroll.
+            layerBack.style.backgroundPositionY = `${scrollY * 0.5}px`;
+
+            // ANIMACIÓN SANGUCHES
+            sandwiches.forEach((sandwich) => {
+                const speed = scrollY * parseFloat(sandwich.dataset.speedFactor);
+                const rotation = parseFloat(sandwich.dataset.initialRotation);
+                const extraRotation = scrollY * 0.05;
+
+                // Movemos los sanguches hacia arriba (restamos Y) relativo al scroll para que "pasen" más rápido o más lento
+                // Aquí usamos transform translate3d porque son elementos DOM, no background
+                sandwich.style.transform = `
+                    translate3d(0, -${speed}px, 0) 
+                    rotate(${rotation + extraRotation}deg)
+                `;
+            });
+
+            requestAnimationFrame(updateParallax);
+        }
+
+        requestAnimationFrame(updateParallax);
+
+    </script>
+</body>
+
+</html>
