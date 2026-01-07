@@ -438,7 +438,7 @@
         /* Ajuste específico para celulares para que la burger se vea gigante */
         @media (max-width: 768px) {
             .featured-video-container video {
-                transform: scale(1.8) translateY(-20px);
+                transform: scale(2.2) translateY(-20px);
             }
 
             .featured-burger-section {
@@ -1159,6 +1159,13 @@
         .sticky-cart-bar:hover .sticky-cart-action i {
             transform: translateX(4px);
         }
+
+        /* Ajuste de sombra del CTA en mobile */
+        @media (max-width: 768px) {
+            .cta-title {
+                text-shadow: 3px 3px 0 black !important;
+            }
+        }
     </style>
 </head>
 
@@ -1282,7 +1289,7 @@
         <!-- CTA FINAL -->
         <section id="cta-section" class="container cta-section has-mantel"
             style="text-align: center; padding-bottom: var(--space-20);">
-            <h2 class="fade-in-up"
+            <h2 class="fade-in-up cta-title"
                 style="font-size: var(--font-h2); margin-bottom: var(--space-8); color: var(--color-brand-dark); text-shadow: 6px 6px 0 black;">
                 ¿TE DEJAMOS<br>MANIJA?
             </h2>
