@@ -22,6 +22,11 @@ function createWhatsAppMessage() {
             message += ` - ${item.variantType}`;
         }
 
+        // Agregar salsa criolla si hay cantidad especificada
+        if (item.salsaCriollaQty && item.salsaCriollaQty > 0) {
+            message += ` (${item.salsaCriollaQty} con Salsa Criolla)`;
+        }
+
         message += '\n';
     });
 

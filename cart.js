@@ -26,7 +26,8 @@ class CartManager {
                 productImage: product.image,
                 variantType: variant.type,
                 price: variant.price,
-                quantity: 1
+                quantity: 1,
+                salsaCriollaQty: 0
             };
         }
 
@@ -77,6 +78,19 @@ class CartManager {
         this.items = {};
         this.saveCart();
         this.notifyListeners();
+    }
+
+    // Actualizar cantidad de salsa criolla para un item
+    updateSalsaCriollaQty(key, newQty) {
+        if (this.items[key]) {
+            // Limitar entre 0 y la cantidad de burgers
+            const maxQty = this.items[key].quantity;
+            const validQty = Math.max(0, Math.min(newQty, maxQty));
+
+            this.items[key].salsaCriollaQty = validQty;
+            this.saveCart();
+            this.notifyListeners();
+        }
     }
 
     // Persistencia
@@ -168,20 +182,40 @@ function renderCart() {
         <div class="cart-item">
             ${item.productImage ? `<img src="${item.productImage}" alt="${item.productName}" class="cart-item-image">` : ''}
             <div class="cart-item-details">
-                <div class="cart-item-name">${item.productName}</div>
-                <div class="cart-item-variant">${item.variantType}</div>
-                <div class="cart-item-price">$${formatPrice(item.price)}</div>
-                <div class="cart-item-controls">
-                    <button class="cart-qty-btn" onclick="cart.updateQuantity('${item.key}', ${item.quantity - 1})">
-                        <i class="ph-bold ph-minus"></i>
-                    </button>
-                    <span class="cart-qty-display">${item.quantity}</span>
-                    <button class="cart-qty-btn" onclick="cart.updateQuantity('${item.key}', ${item.quantity + 1})">
-                        <i class="ph-bold ph-plus"></i>
-                    </button>
-                    <button class="cart-item-remove" onclick="cart.removeFromCart('${item.key}')">
-                        <i class="ph-bold ph-trash"></i>
-                    </button>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2);">
+                    <div style="flex: 1;">
+                        <div class="cart-item-name">${item.productName}</div>
+                        <div class="cart-item-variant">${item.variantType}</div>
+                        <div class="cart-item-price">$${formatPrice(item.price)}</div>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button class="cart-qty-btn" onclick="cart.updateQuantity('${item.key}', ${item.quantity - 1})">
+                            <i class="ph-bold ph-minus"></i>
+                        </button>
+                        <span class="cart-qty-display">${item.quantity}</span>
+                        <button class="cart-qty-btn" onclick="cart.updateQuantity('${item.key}', ${item.quantity + 1})">
+                            <i class="ph-bold ph-plus"></i>
+                        </button>
+                        <button class="cart-item-remove" onclick="cart.removeFromCart('${item.key}')">
+                            <i class="ph-bold ph-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div style="margin-top: var(--space-2); padding-top: var(--space-2); border-top: 2px solid #eee;">
+                    <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: var(--space-1); color: var(--color-dark);">
+                        ¿Cuántas con salsa criolla?
+                    </div>
+                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                        <button class="cart-qty-btn" onclick="cart.updateSalsaCriollaQty('${item.key}', ${(item.salsaCriollaQty || 0) - 1})" style="font-size: 0.9rem;">
+                            <i class="ph-bold ph-minus"></i>
+                        </button>
+                        <span style="min-width: 60px; text-align: center; font-weight: 700; font-size: 0.95rem; color: var(--color-dark);">
+                            ${item.salsaCriollaQty || 0} / ${item.quantity}
+                        </span>
+                        <button class="cart-qty-btn" onclick="cart.updateSalsaCriollaQty('${item.key}', ${(item.salsaCriollaQty || 0) + 1})" style="font-size: 0.9rem;">
+                            <i class="ph-bold ph-plus"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

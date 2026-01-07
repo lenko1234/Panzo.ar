@@ -255,9 +255,10 @@
             align-items: center;
             overflow: hidden;
             position: relative;
-            /* Sección invertida: fondo claro, texto oscuro */
-            background-color: var(--color-light);
+            /* Sección invertida: fondo claro, texto oscuro (con leve transparencia) */
+            background-color: rgba(255, 252, 242, 0.98);
             color: var(--color-dark);
+            z-index: 1;
         }
 
         /* Fondo decorativo abstracto (Red Blob) */
@@ -1184,7 +1185,7 @@
 
     <main>
         <!-- HERO -->
-        <section class="hero">
+        <section class="hero has-mantel">
             <div class="container hero-grid">
                 <div class="hero-content">
                     <h1 class="hero-title fade-in-up">
@@ -1282,7 +1283,7 @@
         <section id="cta-section" class="container cta-section has-mantel"
             style="text-align: center; padding-bottom: var(--space-20);">
             <h2 class="fade-in-up"
-                style="font-size: var(--font-h2); margin-bottom: var(--space-8); color: var(--color-brand-dark); text-shadow: 2px 2px 0 black;">
+                style="font-size: var(--font-h2); margin-bottom: var(--space-8); color: var(--color-brand-dark); text-shadow: 6px 6px 0 black;">
                 ¿TE DEJAMOS<br>MANIJA?
             </h2>
             <a href="https://instagram.com/panzo.ar" class="btn btn-primary fade-in-up">
@@ -1432,9 +1433,23 @@
                 video: "assets/VideoBurgerNew.mp4",
                 bgColor: "#e4e3e8",
                 variants: [
-                    { type: "Simple", price: 8500 },
-                    { type: "Doble", price: 10500 },
-                    { type: "Triple", price: 12500 }
+                    { type: "Simple", price: 11999 },
+                    { type: "Doble", price: 13999 },
+                    { type: "Triple", price: 15999 }
+                ]
+            },
+            {
+                id: 102,
+                name: "LA TRAICIÓN 2.0",
+                ingredients: "Doble medallón, pan, cebolla caramelizada, doble cheddar por medallón, salsa panzo y pepinillos.",
+                icon: "ph-fill ph-hamburger",
+                badge: "LA NUEVA",
+                video: "assets/LaTraicion2,0.mp4",
+                bgColor: "#e4e3e8",
+                variants: [
+                    { type: "Simple", price: 11999 },
+                    { type: "Doble", price: 13999 },
+                    { type: "Triple", price: 15999 }
                 ]
             }
         ];
@@ -1498,8 +1513,8 @@
                         </div>
                         <div class="featured-content">
                             <h2 class="featured-title">
-                                <span>LA</span>
-                                <span>${hamburguesa.name.split(' ')[1]}</span>
+                                <span>${hamburguesa.name.includes('2.0') ? 'LA TRAICIÓN' : 'LA'}</span>
+                                <span>${hamburguesa.name.includes('2.0') ? '2.0' : 'TRAICIÓN'}</span>
                             </h2>
                         </div>
 
