@@ -178,9 +178,12 @@ function renderCart() {
     }
 
     // Renderizar items
-    cartBody.innerHTML = items.map(item => `
+    cartBody.innerHTML = items.map(item => {
+        // Determinar si es una bebida (IDs 5, 6, 7)
+        const isBebida = [5, 6, 7].includes(item.productId);
+
+        return `
         <div class="cart-item">
-            ${item.productImage ? `<img src="${item.productImage}" alt="${item.productName}" class="cart-item-image">` : ''}
             <div class="cart-item-details">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2);">
                     <div style="flex: 1;">
@@ -201,6 +204,7 @@ function renderCart() {
                         </button>
                     </div>
                 </div>
+                ${!isBebida ? `
                 <div style="margin-top: var(--space-2); padding-top: var(--space-2); border-top: 2px solid #eee;">
                     <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: var(--space-1); color: var(--color-dark);">
                         ¿Cuántas con salsa criolla?
@@ -217,9 +221,11 @@ function renderCart() {
                         </button>
                     </div>
                 </div>
+                ` : ''}
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 
     // Mostrar footer y total
     cartFooter.style.display = 'block';
