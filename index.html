@@ -413,7 +413,7 @@
             align-items: center;
             justify-content: flex-start;
             padding-top: var(--space-8);
-            margin-bottom: var(--space-12);
+            margin-bottom: var(--space-4);
             border: var(--border-thick);
             box-shadow: var(--shadow-pop);
         }
@@ -778,6 +778,18 @@
             font-size: 1.5rem;
             vertical-align: super;
             margin-right: 2px;
+        }
+
+        .promo-banner {
+            text-align: center;
+            padding: var(--space-10) var(--space-4);
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            background: var(--color-dark);
+            width: 100%;
         }
 
         /* --- CARRITO SIDEBAR --- */
@@ -1235,7 +1247,7 @@
         </div>
 
         <!-- GRID DE PRODUCTOS -->
-        <section id="menu" class="feed-section">
+        <section id="menu" class="feed-section" style="padding-bottom: 0;">
             <div class="container">
                 <div class="section-header">
                     <h2 class="fade-in-up">HAMBURGUESAS</h2>
@@ -1248,6 +1260,10 @@
             <!-- Aviso si no hay hamburguesas cargadas -->
             <div id="hamburguesas-placeholder" style="text-align: center; padding: var(--space-10) var(--space-6);">
                 <p style="opacity: 0.5; font-style: italic;">Nuevas burguers en camino...</p>
+            </div>
+
+            <div class="promo-banner">
+                * Si te llevás 6 o más hamburguesas te llevás un pack de coronas gratis *
             </div>
         </section>
 
@@ -1362,7 +1378,7 @@
             <div style="margin-top: var(--space-8);">
                 <a href="https://noxsites.com/es" target="_blank" class="btn"
                     style="font-size: 0.8rem; padding: 8px 20px; border-width: 2px; color: var(--color-brand); border-color: var(--color-brand); background: transparent;">
-                    WEB BY NOXSITES <i class="ph-bold ph-arrow-square-out"></i>
+                    WEB BY NOX <i class="ph-bold ph-arrow-square-out"></i>
                 </a>
             </div>
         </div>
@@ -1434,7 +1450,7 @@
             {
                 id: 101,
                 name: "LA TRAICIÓN",
-                ingredients: "Doble medallón de 120gr, bacon, doble cheddar por medallón, cebolla y nuestra salsa golf especial.",
+                ingredients: "Pan de papa, doble medallón de 120gr, bacon, doble cheddar por medallón, cebolla y nuestra salsa golf especial.",
                 icon: "ph-fill ph-hamburger",
                 badge: "LA NUEVA",
                 video: "assets/VideoBurgerNew.mp4",
@@ -1448,7 +1464,7 @@
             {
                 id: 102,
                 name: "LA TRAICIÓN 2.0",
-                ingredients: "Doble medallón, pan, cebolla caramelizada, doble cheddar por medallón, salsa panzo y pepinillos.",
+                ingredients: "Pan de papa, doble medallón, cebolla caramelizada, doble cheddar por medallón, salsa panzo y pepinillos.",
                 icon: "ph-fill ph-hamburger",
                 badge: "LA NUEVA",
                 video: "assets/LaTraicion2,0.mp4",
