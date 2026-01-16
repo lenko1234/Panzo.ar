@@ -687,6 +687,64 @@
         }
 
         /* --- ANIMACIONES --- */
+        .float-sandwich {
+            animation: float-sandwich 4s ease-in-out infinite;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.5));
+            transition: transform 0.3s ease;
+        }
+
+        .float-sandwich:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        @keyframes float-sandwich {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(-2deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+
+        .sandwich-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #121212 100%);
+            border-radius: var(--radius-lg);
+            border: var(--border-thick);
+            box-shadow: var(--shadow-pop);
+            overflow: hidden;
+            padding: var(--space-8);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-8);
+            align-items: center;
+            margin-bottom: var(--space-12);
+        }
+
+        @media (min-width: 768px) {
+            .sandwich-card {
+                grid-template-columns: 1fr 1fr;
+                padding: var(--space-12);
+            }
+        }
+
+        .sandwich-badge {
+            display: inline-block;
+            background: var(--color-accent);
+            color: var(--color-dark);
+            padding: 6px 16px;
+            font-weight: 900;
+            border: 2px solid black;
+            transform: rotate(-3deg);
+            margin-bottom: var(--space-4);
+            box-shadow: 4px 4px 0 black;
+            font-size: 1.2rem;
+        }
+
         .fade-in-up {
             opacity: 0;
             transform: translateY(30px);
@@ -1282,22 +1340,17 @@
             </div>
         </section>
 
-        <!-- SECCIÓN FOCACCIAS PRÓXIMAMENTE -->
-        <section id="focaccias-section" class="feed-section container" style="padding-top: var(--space-12);">
-            <div class="section-header">
-                <h2 class="fade-in-up">FOCACCIAS</h2>
-                <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem;">Próximamente</p>
-            </div>
+        <!-- SECCIÓN SANGUCHES (NUEVO) -->
+        <section id="sanguches-section" class="feed-section" style="padding-top: var(--space-12);">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="fade-in-up">SANGUCHES</h2>
+                    <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem; color: var(--color-brand);">¡LO
+                        NUEVO!</p>
+                </div>
 
-            <div style="text-align: center; padding: var(--space-20) var(--space-6);">
-                <div class="fade-in-up"
-                    style="max-width: 600px; margin: 0 auto; padding: var(--space-10); border: 3px dashed var(--color-dark); border-radius: var(--radius-lg); background: var(--color-light);">
-                    <i class="ph-fill ph-clock"
-                        style="font-size: 4rem; color: var(--color-brand); margin-bottom: var(--space-4);"></i>
-                    <h3 style="font-size: 2rem; margin-bottom: var(--space-4); color: var(--color-dark);">¡Vuelven
-                        Pronto!</h3>
-                    <p style="font-size: 1.1rem; color: var(--color-dark); opacity: 0.7;">Estamos preparando algo
-                        increíble. Nuestras focaccias de masa madre volverán mejor que nunca.</p>
+                <div id="sanguches-grid">
+                    <!-- Los sándwiches se generarán dinámicamente con JavaScript -->
                 </div>
             </div>
         </section>
@@ -1473,6 +1526,20 @@
                     { type: "Simple", price: 11999 },
                     { type: "Doble", price: 13999 },
                     { type: "Triple", price: 15999 }
+                ]
+            }
+        ];
+
+        // --- DATA: Sanguches (NUEVO) ---
+        const sanguches = [
+            {
+                id: 201,
+                name: "Los secretos de La Bondiola",
+                ingredients: "Pan de focaccia con topping de trocitos de milan, bondiola demechada a la cerveza, cebolla salteada, morron y cebolla de verdeo con mayonesa de barbacoa.",
+                image: "assets/bondiola.png",
+                badge: "LA JOYA",
+                variants: [
+                    { type: "Sándwich Completo", price: 14999 }
                 ]
             }
         ];
@@ -1698,9 +1765,59 @@
             });
         }
 
+        // --- Renderizar Sanguches ---
+        function renderSanguches() {
+            const grid = document.getElementById('sanguches-grid');
+
+            sanguches.forEach((sanguche, index) => {
+                const card = document.createElement('div');
+                card.className = 'sandwich-card fade-in-up';
+                card.style.transitionDelay = `${(index + 1) * 100}ms`;
+
+                const initialPrice = sanguche.variants[0].price;
+
+                card.innerHTML = `
+                    <div class="sandwich-visual">
+                        <img src="${sanguche.image}" alt="${sanguche.name}" class="float-sandwich" style="width: 100%; max-width: 450px;">
+                    </div>
+                    <div class="sandwich-info">
+                        ${sanguche.badge ? `<div class="sandwich-badge">${sanguche.badge}</div>` : ''}
+                        <h3 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: var(--space-4); color: white;">${sanguche.name}</h3>
+                        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; margin-bottom: var(--space-6); line-height: 1.6; color: rgba(255,255,255,0.8);">
+                            ${sanguche.ingredients}
+                        </p>
+                        
+                        <div class="variants-container" style="border-top: 2px solid rgba(255,255,255,0.1); padding-top: var(--space-6);">
+                            <div class="variants-pills">
+                                ${sanguche.variants.map((variant, vIndex) => `
+                                    <button 
+                                        class="variant-pill ${vIndex === 0 ? 'active' : ''}" 
+                                        data-sanguche-id="${sanguche.id}" 
+                                        data-variant-index="${vIndex}"
+                                        data-price="${variant.price}"
+                                        style="border-color: white; color: white;"
+                                    >
+                                        ${variant.type}
+                                    </button>
+                                `).join('')}
+                            </div>
+                            <div class="price-display" data-price-display="${sanguche.id}" style="color: var(--color-accent);">$${formatPrice(initialPrice)}</div>
+                        </div>
+
+                        <button class="btn btn-primary add-to-cart-btn" data-product-id="${sanguche.id}" style="width: 100%; margin-top: var(--space-6);">
+                            <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
+                        </button>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
         // --- Inicializar ---
         document.addEventListener('DOMContentLoaded', () => {
             renderHamburguesas();
+            renderSanguches();
             renderBebidas();
             console.log('Productos renderizados:', document.querySelectorAll('.post-card').length);
             connectCartButtons();
