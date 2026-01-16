@@ -745,6 +745,32 @@
             font-size: 1.2rem;
         }
 
+        .sandwich-photo-frame {
+            background: white;
+            padding: 12px;
+            padding-bottom: 40px;
+            /* Estilo polaroid */
+            border: var(--border-thick);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-pop);
+            transform: rotate(-2deg);
+            transition: transform 0.4s var(--ease-elastic);
+            width: 100%;
+            max-width: 400px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .photo-frame-wrapper {
+            position: relative;
+            filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.5));
+            animation: float-sandwich 5s ease-in-out infinite;
+        }
+
+        .photo-frame-wrapper:hover .sandwich-photo-frame {
+            transform: rotate(0deg) scale(1.05);
+        }
+
         .fade-in-up {
             opacity: 0;
             transform: translateY(30px);
@@ -1541,7 +1567,7 @@
                 id: 201,
                 name: "Los secretos de La Bondiola",
                 ingredients: "Pan de focaccia con topping de trocitos de milan, bondiola demechada a la cerveza, cebolla salteada, morron y cebolla de verdeo con mayonesa de barbacoa.",
-                image: "assets/bondiola.png",
+                image: "assets/bondiola_full.png",
                 badge: "LA JOYA",
                 variants: [
                     { type: "Sándwich Completo", price: 13999 }
@@ -1783,7 +1809,9 @@
 
                 card.innerHTML = `
                     <div class="sandwich-visual">
-                        <img src="${sanguche.image}" alt="${sanguche.name}" class="float-sandwich" style="width: 100%; max-width: 450px;">
+                        <div class="photo-frame-wrapper">
+                            <img src="${sanguche.image}" alt="${sanguche.name}" class="sandwich-photo-frame">
+                        </div>
                     </div>
                     <div class="sandwich-info">
                         ${sanguche.badge ? `<div class="sandwich-badge">${sanguche.badge}</div>` : ''}
