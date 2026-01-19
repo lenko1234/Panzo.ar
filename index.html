@@ -442,6 +442,28 @@
             transition: transform 0.3s ease;
         }
 
+        /* Ajuste específico para DESKTOP - para que no tape tanto */
+        @media (min-width: 769px) {
+            .featured-burger-section {
+                padding-top: var(--space-4);
+            }
+
+            .featured-title {
+                font-size: clamp(2.5rem, 8vw, 7rem);
+                margin-bottom: var(--space-6);
+            }
+
+            .featured-media-container video,
+            .featured-media-container img {
+                transform: scale(2.0) translateY(10px);
+            }
+
+            .featured-tagline {
+                bottom: 200px;
+                font-size: clamp(1rem, 1.3vw, 1.4rem);
+            }
+        }
+
         /* Ajuste específico para celulares para que la burger se vea gigante */
         @media (max-width: 768px) {
             .featured-burger-section {
