@@ -404,47 +404,57 @@
 
         /* --- FEATURED BURGER (LAB STYLE) --- */
         .featured-burger-section {
-            background-color: #e4e3e8;
+            background-color: var(--color-dark);
+            /* Cambiado a oscuro para evitar el borde blanco */
             border-radius: var(--radius-lg);
             overflow: hidden;
             position: relative;
-            min-height: 80vh;
+            min-height: 75vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding-top: var(--space-8);
+            padding-top: var(--space-12);
             margin-bottom: var(--space-4);
             border: var(--border-thick);
             box-shadow: var(--shadow-pop);
         }
 
-        .featured-video-container {
+        .featured-media-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .featured-video-container video {
+        .featured-media-container video,
+        .featured-media-container img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            transform: scale(1.3) translateY(-40px);
+            transform: scale(1.3) translateY(0);
+            /* Eliminado el desplazamiento hacia abajo */
             transition: transform 0.3s ease;
         }
 
         /* Ajuste específico para celulares para que la burger se vea gigante */
         @media (max-width: 768px) {
-            .featured-video-container video {
-                transform: scale(2.2) translateY(-20px);
-            }
-
             .featured-burger-section {
                 min-height: 70vh;
                 padding-top: var(--space-2);
+            }
+
+            .featured-media-container video {
+                transform: scale(2.2) translateY(-20px);
+            }
+
+            .featured-media-container img {
+                transform: scale(1.6) translateY(0);
             }
 
             .featured-content {
@@ -456,7 +466,7 @@
             position: relative;
             z-index: 10;
             text-align: center;
-            padding: var(--space-6);
+            padding: var(--space-2);
             pointer-events: none;
         }
 
@@ -466,10 +476,10 @@
 
         .featured-title {
             font-family: 'Bebas Neue', cursiva, sans-serif;
-            font-size: clamp(3rem, 15vw, 10rem);
+            font-size: clamp(3rem, 14vw, 10rem);
             line-height: 0.8;
             text-transform: uppercase;
-            margin-bottom: var(--space-4);
+            margin-bottom: var(--space-2);
             letter-spacing: 0.1em;
             display: flex;
             flex-direction: column;
@@ -479,7 +489,8 @@
 
         .featured-title span {
             color: var(--color-brand);
-            -webkit-text-stroke: 1.5px var(--color-brand);
+            -webkit-text-stroke: 1px var(--color-brand);
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transform: translateY(30px) scale(0.9);
             transition: all 0.8s var(--ease-elastic);
@@ -496,20 +507,21 @@
         }
 
         .featured-tagline {
-            font-size: clamp(1rem, 1.5vw, 1.4rem);
+            font-size: clamp(0.9rem, 1.2vw, 1.3rem);
             font-weight: 700;
             color: var(--color-white);
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-            max-width: 600px;
-            margin: 0 auto var(--space-4);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.4);
+            max-width: 500px;
+            margin: 0 auto;
             text-align: center;
             position: absolute;
-            bottom: 180px;
-            /* Ajustado para quedar justo sobre la barra */
+            bottom: 170px;
+            /* Un poco más abajo para que no choque con títulos largos en mobile */
             left: 50%;
             transform: translateX(-50%);
             width: 90%;
             z-index: 15;
+            line-height: 1.3;
         }
 
         .featured-purchase-bar {
@@ -1357,21 +1369,6 @@
             </div>
         </section>
 
-        <!-- SECCIÓN DE BEBIDAS -->
-        <section id="bebidas-section" class="feed-section container has-mantel"
-            style="padding-top: var(--space-12); border-radius: var(--radius-lg);">
-            <div class="section-header">
-                <h2 class="fade-in-up" style="color: var(--color-dark); text-shadow: 2px 2px 0 white;">BEBIDAS</h2>
-                <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem; color: var(--color-dark);">Para
-                    acompañar</p>
-            </div>
-
-            <div class="feed-grid" id="bebidas-grid"
-                style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                <!-- Las bebidas se generarán dinámicamente con JavaScript -->
-            </div>
-        </section>
-
         <!-- SECCIÓN SANGUCHES (NUEVO) -->
         <section id="sanguches-section" class="feed-section" style="padding-top: var(--space-12);">
             <div class="container">
@@ -1384,6 +1381,21 @@
                 <div id="sanguches-grid">
                     <!-- Los sándwiches se generarán dinámicamente con JavaScript -->
                 </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE BEBIDAS -->
+        <section id="bebidas-section" class="feed-section container has-mantel"
+            style="padding-top: var(--space-12); border-radius: var(--radius-lg);">
+            <div class="section-header">
+                <h2 class="fade-in-up" style="color: var(--color-dark); text-shadow: 2px 2px 0 white;">BEBIDAS</h2>
+                <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem; color: var(--color-dark);">Para
+                    acompañar</p>
+            </div>
+
+            <div class="feed-grid" id="bebidas-grid"
+                style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                <!-- Las bebidas se generarán dinámicamente con JavaScript -->
             </div>
         </section>
 
@@ -1455,8 +1467,8 @@
             </a>
             <div class="footer-links">
                 <a href="#menu">HAMBURGUESAS</a>
+                <a href="#sanguches-section">SANGUCHES</a>
                 <a href="#bebidas-section">BEBIDAS</a>
-                <a href="#focaccias-section">FOCACCIAS</a>
             </div>
             <p style="margin-top: var(--space-8); opacity: 0.5;">© 2025 Panzo - Estilo & Sabor.</p>
 
@@ -1628,7 +1640,7 @@
                     const initialPrice = hamburguesa.variants[0].price;
 
                     featured.innerHTML = `
-                        <div class="featured-video-container">
+                        <div class="featured-media-container">
                             <video autoplay muted loop playsinline>
                                 <source src="${hamburguesa.video}" type="video/mp4">
                             </video>
@@ -1674,7 +1686,6 @@
                 card.className = 'post-card fade-in-up';
                 card.style.transitionDelay = `${(index + 1) * 100}ms`;
 
-                // ... resto de la lógica para tarjetas normales ...
                 const initialPrice = hamburguesa.variants[0].price;
                 const imageContent = hamburguesa.image
                     ? `<img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async">`
@@ -1720,7 +1731,7 @@
                             <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
                         </button>
                     </div>
-                `;
+                    `;
 
                 grid.appendChild(card);
             });
@@ -1791,7 +1802,7 @@
                             <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
                         </button>
                     </div>
-                `;
+                    `;
 
                 grid.appendChild(card);
             });
@@ -1802,26 +1813,27 @@
             const grid = document.getElementById('sanguches-grid');
 
             sanguches.forEach((sanguche, index) => {
-                const card = document.createElement('div');
-                card.className = 'sandwich-card fade-in-up';
-                card.style.transitionDelay = `${(index + 1) * 100}ms`;
+                const featured = document.createElement('div');
+                featured.className = 'featured-burger-section fade-in-up';
+                featured.style.transitionDelay = `${(index + 1) * 100}ms`;
 
                 const initialPrice = sanguche.variants[0].price;
 
-                card.innerHTML = `
-                    <div class="sandwich-visual">
-                        <div class="photo-frame-wrapper">
-                            <img src="${sanguche.image}" alt="${sanguche.name}" class="sandwich-photo-frame">
-                        </div>
+                featured.innerHTML = `
+                    <div class="featured-media-container">
+                        <img src="${sanguche.image}" alt="${sanguche.name}" loading="lazy">
                     </div>
-                    <div class="sandwich-info">
-                        ${sanguche.badge ? `<div class="sandwich-badge">${sanguche.badge}</div>` : ''}
-                        <h3 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: var(--space-4); color: white;">${sanguche.name}</h3>
-                        <p style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; margin-bottom: var(--space-6); line-height: 1.6; color: rgba(255,255,255,0.8);">
-                            ${sanguche.ingredients}
-                        </p>
-                        
-                        <div class="variants-container" style="border-top: 2px solid rgba(255,255,255,0.1); padding-top: var(--space-6);">
+                    <div class="featured-content">
+                        <h2 class="featured-title">
+                            <span>LOS SECRETOS</span>
+                            <span>DE LA BONDIOLA</span>
+                        </h2>
+                    </div>
+
+                    <p class="featured-tagline">${sanguche.ingredients}</p>
+                    
+                    <div class="featured-purchase-bar">
+                        <div class="purchase-row">
                             <div class="variants-pills">
                                 ${sanguche.variants.map((variant, vIndex) => `
                                     <button 
@@ -1829,22 +1841,22 @@
                                         data-sanguche-id="${sanguche.id}" 
                                         data-variant-index="${vIndex}"
                                         data-price="${variant.price}"
-                                        style="border-color: white; color: white;"
                                     >
                                         ${variant.type}
                                     </button>
                                 `).join('')}
                             </div>
-                            <div class="price-display" data-price-display="${sanguche.id}" style="color: var(--color-accent);">$${formatPrice(initialPrice)}</div>
+                            <div class="price-display" data-price-display="${sanguche.id}">${formatPrice(initialPrice)}</div>
                         </div>
-
-                        <button class="btn btn-primary add-to-cart-btn" data-product-id="${sanguche.id}" style="width: 100%; margin-top: var(--space-6);">
+                        
+                        <button class="btn btn-outline add-to-cart-btn" data-product-id="${sanguche.id}" style="width: 100%;">
                             <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
                         </button>
                     </div>
-                `;
+                    `;
 
-                grid.appendChild(card);
+                // Insertamos antes del grid para que tenga el mismo comportamiento que las burgers
+                grid.parentNode.insertBefore(featured, grid);
             });
         }
 
