@@ -442,6 +442,49 @@
             transition: transform 0.3s ease;
         }
 
+        /* Loop seamless con crossfade (técnica de doble video) */
+        .video-loop-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-loop-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .video-loop-container video:nth-child(1) {
+            z-index: 2;
+            animation: videoFadeInOut 10s infinite;
+        }
+
+        .video-loop-container video:nth-child(2) {
+            z-index: 1;
+        }
+
+        @keyframes videoFadeInOut {
+            0% {
+                opacity: 1;
+            }
+
+            45% {
+                opacity: 1;
+            }
+
+            55% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
         /* Ajuste específico para DESKTOP - para que no tape tanto */
         @media (min-width: 769px) {
             .featured-burger-section {
@@ -461,6 +504,11 @@
             .featured-tagline {
                 bottom: 200px;
                 font-size: clamp(1rem, 1.3vw, 1.4rem);
+            }
+
+            /* Video del sanguche más chico en desktop */
+            .video-loop-container video {
+                transform: scale(1.5) translateY(10px);
             }
         }
 
@@ -1596,13 +1644,12 @@
             }
         ];
 
-        // --- DATA: Sanguches (NUEVO) ---
         const sanguches = [
             {
                 id: 201,
                 name: "Los secretos de La Bondiola",
                 ingredients: "Pan de focaccia con topping de trocitos de milan, bondiola demechada a la cerveza, cebolla salteada, morron y cebolla de verdeo con mayonesa de barbacoa.",
-                image: "assets/bondiola_full.png",
+                video: "assets/freepik_a-cinematic-product-showcase-of-a-wide-thick-sandw_kling_1080p_9-16_24fps_31479.mp4",
                 badge: "LA JOYA",
                 variants: [
                     { type: "Sándwich Completo", price: 13999 }
@@ -1843,7 +1890,18 @@
 
                 featured.innerHTML = `
                     <div class="featured-media-container">
-                        <img src="${sanguche.image}" alt="${sanguche.name}" loading="lazy">
+                        ${sanguche.video ? `
+                            <div class="video-loop-container">
+                                <video autoplay muted loop playsinline>
+                                    <source src="${sanguche.video}" type="video/mp4">
+                                </video>
+                                <video autoplay muted loop playsinline>
+                                    <source src="${sanguche.video}" type="video/mp4">
+                                </video>
+                            </div>
+                        ` : `
+                            <img src="${sanguche.image}" alt="${sanguche.name}" loading="lazy">
+                        `}
                     </div>
                     <div class="featured-content">
                         <h2 class="featured-title">
