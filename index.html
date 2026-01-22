@@ -1641,6 +1641,20 @@
                     { type: "Doble", price: 13999 },
                     { type: "Triple", price: 15999 }
                 ]
+            },
+            {
+                id: 103,
+                name: "LA CLÁSICA",
+                ingredients: "Pan de papa, medallón de 120gr, doble cheddar, lechuga repollada, tomate perita y mayonesa Hellmann's.",
+                icon: "ph-fill ph-hamburger",
+                badge: "FAVORITA",
+                video: "assets/Diseño sin título (4).mp4",
+                bgColor: "#e4e3e8",
+                variants: [
+                    { type: "Simple", price: 9999 },
+                    { type: "Doble", price: 10999 },
+                    { type: "Triple", price: 13999 }
+                ]
             }
         ];
 
@@ -1716,8 +1730,22 @@
                         </div>
                         <div class="featured-content">
                             <h2 class="featured-title">
-                                <span>${hamburguesa.name.includes('2.0') ? 'LA TRAICIÓN' : 'LA'}</span>
-                                <span>${hamburguesa.name.includes('2.0') ? '2.0' : 'TRAICIÓN'}</span>
+                                ${(() => {
+                            // Dividir el nombre en dos partes
+                            if (hamburguesa.name.includes('2.0')) {
+                                return '<span>LA TRAICIÓN</span><span>2.0</span>';
+                            } else if (hamburguesa.name === 'LA CLÁSICA') {
+                                return '<span>LA</span><span>CLÁSICA</span>';
+                            } else if (hamburguesa.name === 'LA TRAICIÓN') {
+                                return '<span>LA</span><span>TRAICIÓN</span>';
+                            } else {
+                                // Fallback: dividir en la primera palabra
+                                const parts = hamburguesa.name.split(' ');
+                                const first = parts[0];
+                                const rest = parts.slice(1).join(' ');
+                                return `<span>${first}</span><span>${rest}</span>`;
+                            }
+                        })()}
                             </h2>
                         </div>
 
