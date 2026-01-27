@@ -1615,6 +1615,32 @@
         // --- DATA: Hamburguesas (ACTIVO) ---
         const hamburguesas = [
             {
+                id: 103,
+                name: "LA CLÁSICA",
+                ingredients: "Pan de papa, medallón de 120gr, doble cheddar, lechuga repollada, tomate perita y mayonesa Hellmann's.",
+                icon: "ph-fill ph-hamburger",
+                badge: "FAVORITA",
+                video: "assets/Diseño sin título (4).mp4",
+                bgColor: "#e4e3e8",
+                variants: [
+                    { type: "Simple", price: 9999 },
+                    { type: "Doble", price: 13999 }
+                ]
+            },
+            {
+                id: 104,
+                name: "CUARTO DE LIBRA",
+                ingredients: "Medallón de 120gr, doble cheddar por medallón, cebolla brunoise, kétchup y mostaza.",
+                icon: "ph-fill ph-hamburger",
+                badge: "NUEVA",
+                video: "assets/Diseño sin título (5).mp4",
+                bgColor: "#e4e3e8",
+                variants: [
+                    { type: "Simple", price: 10499 },
+                    { type: "Doble", price: 13999 }
+                ]
+            },
+            {
                 id: 101,
                 name: "LA TRAICIÓN",
                 ingredients: "Pan de papa, doble medallón de 120gr, bacon, doble cheddar por medallón, cebolla y nuestra salsa golf especial.",
@@ -1623,9 +1649,7 @@
                 video: "assets/VideoBurgerNew.mp4",
                 bgColor: "#e4e3e8",
                 variants: [
-                    { type: "Simple", price: 11999 },
-                    { type: "Doble", price: 13999 },
-                    { type: "Triple", price: 15999 }
+                    { type: "Triple", price: 17999 }
                 ]
             },
             {
@@ -1637,23 +1661,7 @@
                 video: "assets/LaTraicion2,0.mp4",
                 bgColor: "#e4e3e8",
                 variants: [
-                    { type: "Simple", price: 11999 },
-                    { type: "Doble", price: 13999 },
-                    { type: "Triple", price: 15999 }
-                ]
-            },
-            {
-                id: 103,
-                name: "LA CLÁSICA",
-                ingredients: "Pan de papa, medallón de 120gr, doble cheddar, lechuga repollada, tomate perita y mayonesa Hellmann's.",
-                icon: "ph-fill ph-hamburger",
-                badge: "FAVORITA",
-                video: "assets/Diseño sin título (4).mp4",
-                bgColor: "#e4e3e8",
-                variants: [
-                    { type: "Simple", price: 9999 },
-                    { type: "Doble", price: 10999 },
-                    { type: "Triple", price: 13999 }
+                    { type: "Doble", price: 14499 }
                 ]
             }
         ];
@@ -1738,6 +1746,8 @@
                                 return '<span>LA</span><span>CLÁSICA</span>';
                             } else if (hamburguesa.name === 'LA TRAICIÓN') {
                                 return '<span>LA</span><span>TRAICIÓN</span>';
+                            } else if (hamburguesa.name === 'CUARTO DE LIBRA') {
+                                return '<span>CUARTO</span><span>DE LIBRA</span>';
                             } else {
                                 // Fallback: dividir en la primera palabra
                                 const parts = hamburguesa.name.split(' ');
