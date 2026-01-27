@@ -3,49 +3,52 @@ class CartManager {
     constructor() {
         this.items = this.loadCart();
         this.listeners = [];
+        this.nextId = this.getNextId();
     }
 
-    // Generar unique key para agrupar items
-    generateKey(productId, variantType) {
-        return `${productId}-${variantType.toLowerCase().replace(/\s+/g, '-')}`;
+    // Generar ID único para cada item individual
+    getNextId() {
+        const items = Object.values(this.items);
+        if (items.length === 0) return 1;
+        return Math.max(...items.map(item => item.uniqueId || 0)) + 1;
     }
 
-    // Agregar al carrito
+    // Agregar al carrito (SIEMPRE como item individual)
     addToCart(product, variant) {
-        const key = this.generateKey(product.id, variant.type);
+        const uniqueId = this.nextId++;
+        const key = `item-${uniqueId}`;
 
-        if (this.items[key]) {
-            // Caso A: Mismo producto + misma variante → aumentar cantidad
-            this.items[key].quantity += 1;
-        } else {
-            // Caso B: Nueva combinación → crear nueva fila
-            this.items[key] = {
-                key,
-                productId: product.id,
-                productName: product.name,
-                productImage: product.image,
-                variantType: variant.type,
-                price: variant.price,
-                quantity: 1,
-                salsaCriollaQty: 0
-            };
-        }
+        // Crear nuevo item individual con extras vacíos
+        this.items[key] = {
+            key,
+            uniqueId,
+            productId: product.id,
+            productName: product.name,
+            productImage: product.image,
+            variantType: variant.type,
+            price: variant.price,
+            quantity: 1, // Siempre 1 por item individual
+            extras: {
+                bacon: 0,
+                medallon: 0,
+                papas: 0,
+                cebolla: 0,
+                cebollaCaramelizada: 0,
+                salsa: 0
+            }
+        };
 
         this.saveCart();
         this.notifyListeners();
         return true;
     }
 
-    // Actualizar cantidad
-    updateQuantity(key, newQuantity) {
+    // Actualizar cantidad de un extra específico
+    updateExtra(key, extraName, newQuantity) {
         if (this.items[key]) {
-            if (newQuantity <= 0) {
-                this.removeFromCart(key);
-            } else {
-                this.items[key].quantity = newQuantity;
-                this.saveCart();
-                this.notifyListeners();
-            }
+            this.items[key].extras[extraName] = Math.max(0, newQuantity);
+            this.saveCart();
+            this.notifyListeners();
         }
     }
 
@@ -61,42 +64,49 @@ class CartManager {
         return Object.values(this.items);
     }
 
-    // Calcular total
+    // Calcular total de un item (precio base + extras)
+    getItemTotal(item) {
+        // Si no tiene extras (items antiguos), solo devolver el precio base
+        if (!item.extras) {
+            return item.price * (item.quantity || 1);
+        }
+
+        const extrasTotal =
+            ((item.extras.bacon || 0) * 1000) +
+            ((item.extras.medallon || 0) * 5000) +
+            ((item.extras.papas || 0) * 2000) +
+            ((item.extras.cebolla || 0) * 100) +
+            ((item.extras.cebollaCaramelizada || 0) * 200) +
+            ((item.extras.salsa || 0) * 300);
+
+        return item.price + extrasTotal;
+    }
+
+    // Calcular total del carrito
     getTotal() {
         return Object.values(this.items).reduce((sum, item) => {
-            return sum + (item.price * item.quantity);
+            return sum + this.getItemTotal(item);
         }, 0);
     }
 
     // Obtener cantidad total de items
     getTotalItems() {
-        return Object.values(this.items).reduce((sum, item) => sum + item.quantity, 0);
+        return Object.values(this.items).length;
     }
 
     // Limpiar carrito
     clearCart() {
         this.items = {};
+        this.nextId = 1;
         this.saveCart();
         this.notifyListeners();
-    }
-
-    // Actualizar cantidad de salsa criolla para un item
-    updateSalsaCriollaQty(key, newQty) {
-        if (this.items[key]) {
-            // Limitar entre 0 y la cantidad de burgers
-            const maxQty = this.items[key].quantity;
-            const validQty = Math.max(0, Math.min(newQty, maxQty));
-
-            this.items[key].salsaCriollaQty = validQty;
-            this.saveCart();
-            this.notifyListeners();
-        }
     }
 
     // Persistencia
     saveCart() {
         const cartData = {
             items: this.items,
+            nextId: this.nextId,
             timestamp: Date.now()
         };
         localStorage.setItem('panzo_cart', JSON.stringify(cartData));
@@ -109,9 +119,11 @@ class CartManager {
         try {
             const cartData = JSON.parse(saved);
 
-            // Si es formato antiguo (sin timestamp), migrar
+            // Si es formato antiguo (sin timestamp), limpiar
             if (!cartData.timestamp) {
-                return cartData;
+                console.log('🗑️ Carrito antiguo detectado, limpiando...');
+                localStorage.removeItem('panzo_cart');
+                return {};
             }
 
             // Verificar si han pasado más de 24 horas (86400000 ms)
@@ -126,7 +138,23 @@ class CartManager {
                 return {};
             }
 
-            return cartData.items;
+            // Actualizar nextId si existe
+            if (cartData.nextId) {
+                this.nextId = cartData.nextId;
+            }
+
+            // Migrar items antiguos que no tienen extras
+            const migratedItems = {};
+            for (const [key, item] of Object.entries(cartData.items)) {
+                if (!item.extras) {
+                    console.log(`🔄 Migrando item antiguo: ${item.productName}`);
+                    // Limpiar items antiguos que no son compatibles
+                    continue;
+                }
+                migratedItems[key] = item;
+            }
+
+            return migratedItems;
         } catch (error) {
             console.error('Error al cargar carrito:', error);
             return {};
@@ -146,12 +174,23 @@ class CartManager {
 // Instancia global del carrito
 const cart = new CartManager();
 
+// Estado de paneles abiertos
+const openExtras = new Set();
+
 // ===== UI DEL CARRITO =====
 function renderCart() {
     const cartBody = document.getElementById('cart-body');
     const cartFooter = document.getElementById('cart-footer');
     const cartTotal = document.getElementById('cart-total');
     const cartBadge = document.getElementById('cart-badge');
+
+    // Guardar qué paneles están abiertos antes de re-renderizar
+    const currentlyOpen = [];
+    document.querySelectorAll('.extras-panel').forEach(panel => {
+        if (panel.style.display !== 'none') {
+            currentlyOpen.push(panel.id.replace('extras-', ''));
+        }
+    });
 
     const items = cart.getItems();
     const total = cart.getTotal();
@@ -181,6 +220,10 @@ function renderCart() {
     cartBody.innerHTML = items.map(item => {
         // Determinar si es una bebida (IDs 5, 6, 7)
         const isBebida = [5, 6, 7].includes(item.productId);
+        const itemTotal = cart.getItemTotal(item);
+
+        // Contar cuántos extras tiene seleccionados
+        const extrasCount = Object.values(item.extras || {}).reduce((sum, qty) => sum + qty, 0);
 
         return `
         <div class="cart-item">
@@ -189,36 +232,23 @@ function renderCart() {
                     <div style="flex: 1;">
                         <div class="cart-item-name">${item.productName}</div>
                         <div class="cart-item-variant">${item.variantType}</div>
-                        <div class="cart-item-price">$${formatPrice(item.price)}</div>
+                        <div class="cart-item-price">$${formatPrice(itemTotal)}</div>
                     </div>
-                    <div class="cart-item-controls">
-                        <button class="cart-qty-btn" onclick="cart.updateQuantity('${item.key}', ${item.quantity - 1})">
-                            <i class="ph-bold ph-minus"></i>
-                        </button>
-                        <span class="cart-qty-display">${item.quantity}</span>
-                        <button class="cart-qty-btn" onclick="cart.updateQuantity('${item.key}', ${item.quantity + 1})">
-                            <i class="ph-bold ph-plus"></i>
-                        </button>
-                        <button class="cart-item-remove" onclick="cart.removeFromCart('${item.key}')">
-                            <i class="ph-bold ph-trash"></i>
-                        </button>
-                    </div>
+                    <button class="cart-item-remove" onclick="cart.removeFromCart('${item.key}')">
+                        <i class="ph-bold ph-trash"></i>
+                    </button>
                 </div>
                 ${!isBebida ? `
-                <div style="margin-top: var(--space-2); padding-top: var(--space-2); border-top: 2px solid #eee;">
-                    <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: var(--space-1); color: var(--color-dark);">
-                        ¿Cuántas con salsa criolla?
-                    </div>
-                    <div style="display: flex; align-items: center; gap: var(--space-2);">
-                        <button class="cart-qty-btn" onclick="cart.updateSalsaCriollaQty('${item.key}', ${(item.salsaCriollaQty || 0) - 1})" style="font-size: 0.9rem;">
-                            <i class="ph-bold ph-minus"></i>
-                        </button>
-                        <span style="min-width: 60px; text-align: center; font-weight: 700; font-size: 0.95rem; color: var(--color-dark);">
-                            ${item.salsaCriollaQty || 0} / ${item.quantity}
+                <div style="margin-top: var(--space-3);">
+                    <button class="extras-toggle" onclick="toggleExtras('${item.key}')" style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: #f5f5f5; border: none; padding: var(--space-2) var(--space-3); border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.9rem; color: var(--color-dark); transition: all 0.2s ease;">
+                        <span>
+                            <i class="ph-bold ph-plus-circle" style="margin-right: 6px; color: var(--color-brand);"></i>
+                            Extras ${extrasCount > 0 ? `(${extrasCount})` : ''}
                         </span>
-                        <button class="cart-qty-btn" onclick="cart.updateSalsaCriollaQty('${item.key}', ${(item.salsaCriollaQty || 0) + 1})" style="font-size: 0.9rem;">
-                            <i class="ph-bold ph-plus"></i>
-                        </button>
+                        <i class="ph-bold ph-caret-down extras-arrow" id="arrow-${item.key}" style="transition: transform 0.3s ease;"></i>
+                    </button>
+                    <div class="extras-panel" id="extras-${item.key}" style="display: none; margin-top: var(--space-2); padding: var(--space-3); background: #fafafa; border-radius: 8px; border: 2px solid #eee;">
+                        ${renderExtrasPanel(item)}
                     </div>
                 </div>
                 ` : ''}
@@ -230,6 +260,76 @@ function renderCart() {
     // Mostrar footer y total
     cartFooter.style.display = 'block';
     cartTotal.textContent = `$${formatPrice(total)}`;
+
+    // Restaurar paneles abiertos
+    currentlyOpen.forEach(key => {
+        const panel = document.getElementById(`extras-${key}`);
+        const arrow = document.getElementById(`arrow-${key}`);
+        if (panel && arrow) {
+            panel.style.display = 'block';
+            arrow.style.transform = 'rotate(180deg)';
+            openExtras.add(key);
+        }
+    });
+}
+
+// Renderizar panel de extras
+function renderExtrasPanel(item) {
+    const extras = [
+        { name: 'bacon', label: 'Bacon', price: 1000 },
+        { name: 'medallon', label: 'Medallón + 2 Cheddar', price: 5000 },
+        { name: 'papas', label: 'Papas fritas', price: 2000 },
+        { name: 'cebolla', label: 'Cebolla', price: 100 },
+        { name: 'cebollaCaramelizada', label: 'Cebolla caramelizada', price: 200 },
+        { name: 'salsa', label: getSalsaLabel(item.productId), price: 300 }
+    ];
+
+    return extras.map(extra => {
+        const qty = item.extras[extra.name] || 0;
+        return `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); padding-bottom: var(--space-2); border-bottom: 1px solid #e0e0e0;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 0.85rem; color: var(--color-dark);">${extra.label}</div>
+                    <div style="font-size: 0.75rem; color: #666;">+$${formatPrice(extra.price)}</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                    <button class="cart-qty-btn" onclick="cart.updateExtra('${item.key}', '${extra.name}', ${qty - 1})" style="font-size: 0.8rem; width: 28px; height: 28px;">
+                        <i class="ph-bold ph-minus"></i>
+                    </button>
+                    <span style="min-width: 30px; text-align: center; font-weight: 700; font-size: 0.9rem; color: var(--color-dark);">${qty}</span>
+                    <button class="cart-qty-btn" onclick="cart.updateExtra('${item.key}', '${extra.name}', ${qty + 1})" style="font-size: 0.8rem; width: 28px; height: 28px;">
+                        <i class="ph-bold ph-plus"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Obtener label de salsa según la hamburguesa
+function getSalsaLabel(productId) {
+    const salsas = {
+        101: 'Salsa Golf',      // La Traición
+        102: 'Salsa Panzo',     // La Traición 2.0
+        103: 'Mayonesa',        // La Clásica
+        104: 'Kétchup/Mostaza', // Cuarto de Libra
+        201: 'Mayo Barbacoa'    // Bondiola
+    };
+    return salsas[productId] || 'Salsa';
+}
+
+// Toggle de extras
+function toggleExtras(itemKey) {
+    const panel = document.getElementById(`extras-${itemKey}`);
+    const arrow = document.getElementById(`arrow-${itemKey}`);
+
+    if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        arrow.style.transform = 'rotate(180deg)';
+    } else {
+        panel.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+    }
 }
 
 // ===== STICKY CART BAR (MOBILE) =====
@@ -291,9 +391,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Sticky bar abre el carrito
     document.getElementById('sticky-cart-bar').addEventListener('click', toggleCart);
 
-    // Bot\u00f3n vaciar carrito
+    // Botón vaciar carrito
     document.getElementById('clear-cart-btn').addEventListener('click', () => {
-        if (confirm('\u00bfEst\u00e1s seguro de que quer\u00e9s vaciar el carrito?')) {
+        if (confirm('¿Estás seguro de que querés vaciar el carrito?')) {
             cart.clearCart();
         }
     });

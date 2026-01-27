@@ -1,8 +1,8 @@
-// ===== WHATSAPP SIMPLE (SIN PRECIOS) =====
+// ===== WHATSAPP CON EXTRAS =====
 
 const WHATSAPP_NUMBER = '5493442678312'; // Tu número de WhatsApp
 
-// Crear mensaje de WhatsApp simple y limpio
+// Crear mensaje de WhatsApp con extras
 function createWhatsAppMessage() {
     const items = cart.getItems();
 
@@ -14,23 +14,42 @@ function createWhatsAppMessage() {
     // Mensaje con formato específico
     let message = 'Hola, te encargo el siguiente pedido:\n\n';
 
-    items.forEach((item) => {
-        message += `${item.quantity}x ${item.productName}`;
+    items.forEach((item, index) => {
+        message += `${index + 1}. ${item.productName}`;
 
         // Solo agregar variante si no es "Unidad" (bebidas)
         if (item.variantType !== 'Unidad') {
             message += ` - ${item.variantType}`;
         }
 
-        // Agregar salsa criolla si hay cantidad especificada
-        if (item.salsaCriollaQty && item.salsaCriollaQty > 0) {
-            message += ` (${item.salsaCriollaQty} con Salsa Criolla)`;
+        message += '\n';
+
+        // Agregar extras si tiene
+        const extrasLabels = {
+            bacon: 'Bacon',
+            medallon: 'Medallón + 2 Cheddar',
+            papas: 'Papas fritas',
+            cebolla: 'Cebolla',
+            cebollaCaramelizada: 'Cebolla caramelizada',
+            salsa: getSalsaLabel(item.productId)
+        };
+
+        let hasExtras = false;
+        for (const [extraKey, extraLabel] of Object.entries(extrasLabels)) {
+            const qty = item.extras?.[extraKey] || 0;
+            if (qty > 0) {
+                if (!hasExtras) {
+                    message += '   Extras:\n';
+                    hasExtras = true;
+                }
+                message += `   • ${qty}x ${extraLabel}\n`;
+            }
         }
 
         message += '\n';
     });
 
-    message += '\nGracias.';
+    message += 'Gracias.';
 
     return message;
 }
