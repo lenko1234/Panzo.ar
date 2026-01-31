@@ -2299,14 +2299,19 @@
 
         // --- PROMO POPUP CON TEMPORIZADOR ---
         function initPromoPopup() {
-            // Esperar 3 segundos después de que carga la página
-            setTimeout(() => {
-                // Crear el contenedor de la promo
-                const promoContainer = document.createElement('div');
-                promoContainer.id = 'promo-popup';
-                promoContainer.className = 'promo-container';
+            // Pre-cargar la imagen para evitar que aparezca antes el texto
+            const img = new Image();
+            img.src = 'assets/promo-combo.png';
 
-                promoContainer.innerHTML = `
+            img.onload = () => {
+                // Una vez cargada la imagen, esperamos los 3 segundos para mostrarla
+                setTimeout(() => {
+                    // Crear el contenedor de la promo
+                    const promoContainer = document.createElement('div');
+                    promoContainer.id = 'promo-popup';
+                    promoContainer.className = 'promo-container';
+
+                    promoContainer.innerHTML = `
                     <div class="timer-wrapper">
                         <svg class="timer-svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
                             <circle class="timer-path" cx="100" cy="100" r="90" fill="none" />
@@ -2316,126 +2321,126 @@
                     <div class="promo-label">promo enero dia 203453</div>
                 `;
 
-                // Función para verificar si una posición colisiona con elementos importantes
-                function isPositionSafe(x, y, width, height) {
-                    const promoRect = {
-                        left: x,
-                        right: x + width,
-                        top: y,
-                        bottom: y + height
-                    };
+                    // Función para verificar si una posición colisiona con elementos importantes
+                    function isPositionSafe(x, y, width, height) {
+                        const promoRect = {
+                            left: x,
+                            right: x + width,
+                            top: y,
+                            bottom: y + height
+                        };
 
-                    // Elementos a evitar
-                    const avoidSelectors = [
-                        '.btn',
-                        '.add-to-cart-btn',
-                        '.variant-pill',
-                        '.featured-purchase-bar',
-                        '.post-card',
-                        '.hero-cta',
-                        '#cart-icon',
-                        '.logo',
-                        '.featured-title',
-                        '.featured-tagline'
-                    ];
+                        // Elementos a evitar
+                        const avoidSelectors = [
+                            '.btn',
+                            '.add-to-cart-btn',
+                            '.variant-pill',
+                            '.featured-purchase-bar',
+                            '.post-card',
+                            '.hero-cta',
+                            '#cart-icon',
+                            '.logo',
+                            '.featured-title',
+                            '.featured-tagline'
+                        ];
 
-                    for (const selector of avoidSelectors) {
-                        const elements = document.querySelectorAll(selector);
-                        for (const el of elements) {
-                            const rect = el.getBoundingClientRect();
+                        for (const selector of avoidSelectors) {
+                            const elements = document.querySelectorAll(selector);
+                            for (const el of elements) {
+                                const rect = el.getBoundingClientRect();
 
-                            // Verificar colisión con margen de seguridad de 20px
-                            const margin = 20;
-                            if (!(promoRect.right + margin < rect.left ||
-                                promoRect.left - margin > rect.right ||
-                                promoRect.bottom + margin < rect.top ||
-                                promoRect.top - margin > rect.bottom)) {
-                                return false;
+                                // Verificar colisión con margen de seguridad de 20px
+                                const margin = 20;
+                                if (!(promoRect.right + margin < rect.left ||
+                                    promoRect.left - margin > rect.right ||
+                                    promoRect.bottom + margin < rect.top ||
+                                    promoRect.top - margin > rect.bottom)) {
+                                    return false;
+                                }
                             }
                         }
-                    }
-                    return true;
-                }
-
-                // Función para encontrar una posición segura
-                function findSafePosition() {
-                    const width = 200;
-                    const height = 230;
-                    const maxAttempts = 50;
-
-                    for (let i = 0; i < maxAttempts; i++) {
-                        // Generar posición aleatoria con márgenes
-                        const x = Math.random() * (window.innerWidth - width - 40) + 20;
-                        const y = Math.random() * (window.innerHeight - height - 40) + 20;
-
-                        if (isPositionSafe(x, y, width, height)) {
-                            return { x, y };
-                        }
+                        return true;
                     }
 
-                    // Si no encuentra posición segura, usar esquina superior derecha
-                    return {
-                        x: window.innerWidth - width - 30,
-                        y: 30
-                    };
-                }
+                    // Función para encontrar una posición segura
+                    function findSafePosition() {
+                        const width = 200;
+                        const height = 230;
+                        const maxAttempts = 50;
 
-                // Posicionar el popup
-                const position = findSafePosition();
-                promoContainer.style.left = `${position.x}px`;
-                promoContainer.style.top = `${position.y}px`;
+                        for (let i = 0; i < maxAttempts; i++) {
+                            // Generar posición aleatoria con márgenes
+                            const x = Math.random() * (window.innerWidth - width - 40) + 20;
+                            const y = Math.random() * (window.innerHeight - height - 40) + 20;
 
-                // Agregar al DOM
-                document.body.appendChild(promoContainer);
-
-                // Animar entrada después de un frame
-                requestAnimationFrame(() => {
-                    promoContainer.classList.add('visible');
-
-                    // Obtener el path y configurar la animación del temporizador
-                    const timerPath = promoContainer.querySelector('.timer-path');
-
-                    if (timerPath) {
-                        // Calcular la longitud total del path irregular
-                        const pathLength = timerPath.getTotalLength();
-
-                        // Configurar el stroke-dasharray y dashoffset
-                        timerPath.style.strokeDasharray = pathLength;
-                        timerPath.style.strokeDashoffset = pathLength;
-
-                        // Animar el dashoffset de pathLength a 0 en 30 segundos
-                        let startTime = null;
-                        const duration = 30000; // 30 segundos en milisegundos
-
-                        function animateTimer(timestamp) {
-                            if (!startTime) startTime = timestamp;
-                            const elapsed = timestamp - startTime;
-                            const progress = Math.min(elapsed / duration, 1);
-
-                            // Reducir el offset para "dibujar" el contorno
-                            timerPath.style.strokeDashoffset = pathLength * (1 - progress);
-
-                            if (progress < 1) {
-                                requestAnimationFrame(animateTimer);
+                            if (isPositionSafe(x, y, width, height)) {
+                                return { x, y };
                             }
                         }
 
-                        requestAnimationFrame(animateTimer);
+                        // Si no encuentra posición segura, usar esquina superior derecha
+                        return {
+                            x: window.innerWidth - width - 30,
+                            y: 30
+                        };
                     }
-                });
 
-                // Evento click para abrir el modal
-                promoContainer.addEventListener('click', () => {
-                    openPromoModal();
-                });
+                    // Posicionar el popup
+                    const position = findSafePosition();
+                    promoContainer.style.left = `${position.x}px`;
+                    promoContainer.style.top = `${position.y}px`;
 
-                // Función para abrir el modal con efecto typewriter
-                function openPromoModal() {
-                    // Crear el overlay del modal
-                    const modalOverlay = document.createElement('div');
-                    modalOverlay.className = 'promo-modal-overlay';
+                    // Agregar al DOM
+                    document.body.appendChild(promoContainer);
 
-                    modalOverlay.innerHTML = `
+                    // Animar entrada después de un frame
+                    requestAnimationFrame(() => {
+                        promoContainer.classList.add('visible');
+
+                        // Obtener el path y configurar la animación del temporizador
+                        const timerPath = promoContainer.querySelector('.timer-path');
+
+                        if (timerPath) {
+                            // Calcular la longitud total del path irregular
+                            const pathLength = timerPath.getTotalLength();
+
+                            // Configurar el stroke-dasharray y dashoffset
+                            timerPath.style.strokeDasharray = pathLength;
+                            timerPath.style.strokeDashoffset = pathLength;
+
+                            // Animar el dashoffset de pathLength a 0 en 30 segundos
+                            let startTime = null;
+                            const duration = 30000; // 30 segundos en milisegundos
+
+                            function animateTimer(timestamp) {
+                                if (!startTime) startTime = timestamp;
+                                const elapsed = timestamp - startTime;
+                                const progress = Math.min(elapsed / duration, 1);
+
+                                // Reducir el offset para "dibujar" el contorno
+                                timerPath.style.strokeDashoffset = pathLength * (1 - progress);
+
+                                if (progress < 1) {
+                                    requestAnimationFrame(animateTimer);
+                                }
+                            }
+
+                            requestAnimationFrame(animateTimer);
+                        }
+                    });
+
+                    // Evento click para abrir el modal
+                    promoContainer.addEventListener('click', () => {
+                        openPromoModal();
+                    });
+
+                    // Función para abrir el modal con efecto typewriter
+                    function openPromoModal() {
+                        // Crear el overlay del modal
+                        const modalOverlay = document.createElement('div');
+                        modalOverlay.className = 'promo-modal-overlay';
+
+                        modalOverlay.innerHTML = `
                         <div class="promo-modal">
                             <button class="promo-modal-close">×</button>
                             <div class="promo-modal-content">
@@ -2447,91 +2452,92 @@
                         </div>
                     `;
 
-                    document.body.appendChild(modalOverlay);
+                        document.body.appendChild(modalOverlay);
 
-                    // Animar entrada
-                    requestAnimationFrame(() => {
-                        modalOverlay.classList.add('visible');
-                    });
+                        // Animar entrada
+                        requestAnimationFrame(() => {
+                            modalOverlay.classList.add('visible');
+                        });
 
-                    // Efecto typewriter
-                    const textElement = modalOverlay.querySelector('.promo-modal-text');
-                    const fullText = 'Dos cuarto de libras simple (pan de papa, medallón 120gr, cebolla brunoise, ketchup y mostaza) + 2 cocas de vidrio + papas fritas + envío gratis. - PRECIO: $22.990';
-                    let charIndex = 0;
+                        // Efecto typewriter
+                        const textElement = modalOverlay.querySelector('.promo-modal-text');
+                        const fullText = 'Dos cuarto de libras simple (pan de papa, medallón 120gr, cebolla brunoise, ketchup y mostaza) + 2 cocas de vidrio + papas fritas + envío gratis. - PRECIO: $22.990';
+                        let charIndex = 0;
 
-                    function typeWriter() {
-                        if (charIndex < fullText.length) {
-                            textElement.textContent = fullText.substring(0, charIndex + 1);
-                            charIndex++;
-                            setTimeout(typeWriter, 30); // Velocidad de escritura
+                        function typeWriter() {
+                            if (charIndex < fullText.length) {
+                                textElement.textContent = fullText.substring(0, charIndex + 1);
+                                charIndex++;
+                                setTimeout(typeWriter, 30); // Velocidad de escritura
+                            }
                         }
+
+                        // Iniciar typewriter después de un pequeño delay
+                        setTimeout(typeWriter, 300);
+
+                        // Botón de agregar al pedido
+                        const addBtn = modalOverlay.querySelector('.promo-modal-add-btn');
+                        addBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+
+                            // Crear producto y variante en el formato que espera el carrito
+                            const promoProduct = {
+                                id: 999, // ID único para la promo
+                                name: 'PROMO ENERO DIA 203453',
+                                image: 'assets/promo-combo.png'
+                            };
+
+                            const promoVariant = {
+                                type: 'Combo Completo: 2 Cuartos de Libra + 2 Cocas + Papas + Envío Gratis',
+                                price: 22990 // Precio de la promo: $22.990
+                            };
+
+                            // Agregar al carrito usando el sistema existente
+                            cart.addToCart(promoProduct, promoVariant);
+
+                            // Cerrar el modal
+                            closeModal();
+
+                            // Abrir el carrito para mostrar que se agregó
+                            setTimeout(() => {
+                                toggleCart();
+                            }, 300);
+                        });
+
+                        // Cerrar modal
+                        const closeBtn = modalOverlay.querySelector('.promo-modal-close');
+                        const closeModal = () => {
+                            modalOverlay.classList.remove('visible');
+                            setTimeout(() => {
+                                modalOverlay.remove();
+                            }, 300);
+                        };
+
+                        closeBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            closeModal();
+                        });
+
+                        modalOverlay.addEventListener('click', (e) => {
+                            if (e.target === modalOverlay) {
+                                closeModal();
+                            }
+                        });
                     }
 
-                    // Iniciar typewriter después de un pequeño delay
-                    setTimeout(typeWriter, 300);
 
-                    // Botón de agregar al pedido
-                    const addBtn = modalOverlay.querySelector('.promo-modal-add-btn');
-                    addBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-
-                        // Crear producto y variante en el formato que espera el carrito
-                        const promoProduct = {
-                            id: 999, // ID único para la promo
-                            name: 'PROMO ENERO DIA 203453',
-                            image: 'assets/promo-combo.png'
-                        };
-
-                        const promoVariant = {
-                            type: 'Combo Completo: 2 Cuartos de Libra + 2 Cocas + Papas + Envío Gratis',
-                            price: 22990 // Precio de la promo: $22.990
-                        };
-
-                        // Agregar al carrito usando el sistema existente
-                        cart.addToCart(promoProduct, promoVariant);
-
-                        // Cerrar el modal
-                        closeModal();
-
-                        // Abrir el carrito para mostrar que se agregó
-                        setTimeout(() => {
-                            toggleCart();
-                        }, 300);
-                    });
-
-                    // Cerrar modal
-                    const closeBtn = modalOverlay.querySelector('.promo-modal-close');
-                    const closeModal = () => {
-                        modalOverlay.classList.remove('visible');
-                        setTimeout(() => {
-                            modalOverlay.remove();
-                        }, 300);
-                    };
-
-                    closeBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        closeModal();
-                    });
-
-                    modalOverlay.addEventListener('click', (e) => {
-                        if (e.target === modalOverlay) {
-                            closeModal();
-                        }
-                    });
-                }
-
-
-                // Auto-destrucción después de 30 segundos
-                setTimeout(() => {
-                    promoContainer.classList.add('fade-out');
-
-                    // Remover del DOM después de la animación
+                    // Auto-destrucción después de 30 segundos
                     setTimeout(() => {
-                        promoContainer.remove();
-                    }, 600);
-                }, 30000);
+                        promoContainer.classList.add('fade-out');
 
-            }, 3000); // Esperar 3 segundos después de cargar la página
+                        // Remover del DOM después de la animación
+                        setTimeout(() => {
+                            promoContainer.remove();
+                        }, 600);
+                    }, 30000);
+
+                }, 3000);
+            };
         }
 
         // Inicializar la promo cuando el DOM esté listo
