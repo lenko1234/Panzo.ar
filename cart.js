@@ -28,6 +28,7 @@ class CartManager {
             variantType: variant.type,
             price: variant.price,
             quantity: 1, // Siempre 1 por item individual
+            comments: '', // Comentarios personalizados
             extras: {
                 bacon: 0,
                 medallon: 0,
@@ -49,6 +50,15 @@ class CartManager {
             this.items[key].extras[extraName] = Math.max(0, newQuantity);
             this.saveCart();
             this.notifyListeners();
+        }
+    }
+
+    // Actualizar comentarios de un item (sin re-render para evitar saltos)
+    updateComments(key, comments) {
+        if (this.items[key]) {
+            this.items[key].comments = comments;
+            this.saveCart();
+            // NO llamamos notifyListeners() para evitar re-render mientras se escribe
         }
     }
 
@@ -151,6 +161,10 @@ class CartManager {
                     // Limpiar items antiguos que no son compatibles
                     continue;
                 }
+                // Agregar campo comments si no existe
+                if (!item.hasOwnProperty('comments')) {
+                    item.comments = '';
+                }
                 migratedItems[key] = item;
             }
 
@@ -252,6 +266,16 @@ function renderCart() {
                     </div>
                 </div>
                 ` : ''}
+                <div style="margin-top: var(--space-3);">
+                    <textarea 
+                        id="comments-${item.key}"
+                        placeholder="Comentarios..."
+                        style="width: 100%; min-height: 50px; padding: var(--space-2); border: 2px solid #e0e0e0; border-radius: 8px; font-family: inherit; font-size: 0.85rem; resize: vertical; transition: border-color 0.2s ease;"
+                        oninput="cart.updateComments('${item.key}', this.value)"
+                        onfocus="this.style.borderColor='var(--color-brand)'"
+                        onblur="this.style.borderColor='#e0e0e0'"
+                    >${item.comments || ''}</textarea>
+                </div>
             </div>
         </div>
         `;

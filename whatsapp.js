@@ -46,6 +46,11 @@ function createWhatsAppMessage() {
             }
         }
 
+        // Agregar comentarios si tiene
+        if (item.comments && item.comments.trim() !== '') {
+            message += `   💬 ${item.comments.trim()}\n`;
+        }
+
         message += '\n';
     });
 
