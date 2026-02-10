@@ -1669,9 +1669,11 @@
                 <p style="opacity: 0.5; font-style: italic;">Nuevas burguers en camino...</p>
             </div>
 
+            <!-- 
             <div class="promo-banner">
                 * Si te llevás 6 o más hamburguesas te llevás un pack de coronas gratis *
             </div>
+            -->
         </section>
 
         <!-- SECCIÓN SANGUCHES (NUEVO) -->
@@ -2298,14 +2300,44 @@
             }
         });
 
+        // --- CONFIGURACIÓN DE PROMO ---
+        const CONFIG_PROMO = {
+            activa: false, // 🔴 Cambiar a true para activar la promo
+
+            // Información de la promo
+            id: 999, // ID único para el carrito
+            titulo: "PROMO ENERO DIA 203453",
+            label: "promo enero dia 203453", // Texto que aparece debajo de la imagen flotante
+            descripcion: "Dos cuarto de libras simple (pan de papa, medallón 120gr, cebolla brunoise, ketchup y mostaza) + 2 cocas de vidrio + papas fritas + envío gratis.",
+            precio: 22990,
+
+            // Recursos visuales
+            imagen: "assets/promo-combo.png",
+
+            // Configuración de comportamiento
+            delayInicial: 3000, // Milisegundos antes de mostrar la promo
+            duracion: 30000, // Milisegundos que dura visible la promo
+            velocidadTypewriter: 30, // Milisegundos por carácter en el efecto de escritura
+
+            // Texto del botón y variante para el carrito
+            textoBoton: "🛒 AGREGAR AL PEDIDO",
+            varianteTipo: "Combo Completo: 2 Cuartos de Libra + 2 Cocas + Papas + Envío Gratis"
+        };
+
         // --- PROMO POPUP CON TEMPORIZADOR ---
         function initPromoPopup() {
+            // Si la promo no está activa, no hacer nada
+            if (!CONFIG_PROMO.activa) {
+                console.log('Promo desactivada');
+                return;
+            }
+
             // Pre-cargar la imagen para evitar que aparezca antes el texto
             const img = new Image();
-            img.src = 'assets/promo-combo.png';
+            img.src = CONFIG_PROMO.imagen;
 
             img.onload = () => {
-                // Una vez cargada la imagen, esperamos los 3 segundos para mostrarla
+                // Una vez cargada la imagen, esperamos los segundos configurados para mostrarla
                 setTimeout(() => {
                     const hero = document.querySelector('.hero');
                     if (!hero) return;
@@ -2320,9 +2352,9 @@
                         <svg class="timer-svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
                             <circle class="timer-path" cx="100" cy="100" r="90" fill="none" />
                         </svg>
-                        <img src="assets/promo-combo.png" class="promo-img" alt="Promo Especial">
+                        <img src="${CONFIG_PROMO.imagen}" class="promo-img" alt="${CONFIG_PROMO.titulo}">
                     </div>
-                    <div class="promo-label">promo enero dia 203453</div>
+                    <div class="promo-label">${CONFIG_PROMO.label}</div>
                 `;
 
                     // Función para verificar si una posición colisiona con elementos importantes
@@ -2405,9 +2437,9 @@
                             timerPath.style.strokeDasharray = pathLength;
                             timerPath.style.strokeDashoffset = pathLength;
 
-                            // Animar el dashoffset de pathLength a 0 en 30 segundos
+                            // Animar el dashoffset de pathLength a 0 en el tiempo configurado
                             let startTime = null;
-                            const duration = 30000; // 30 segundos en milisegundos
+                            const duration = CONFIG_PROMO.duracion;
 
                             function animateTimer(timestamp) {
                                 if (!startTime) startTime = timestamp;
@@ -2441,10 +2473,10 @@
                         <div class="promo-modal">
                             <button class="promo-modal-close">×</button>
                             <div class="promo-modal-content">
-                                <img src="assets/promo-combo.png" class="promo-modal-image" alt="Promo Combo">
-                                <h2 class="promo-modal-title">PROMO: ENERO DIA 203453</h2>
+                                <img src="${CONFIG_PROMO.imagen}" class="promo-modal-image" alt="${CONFIG_PROMO.titulo}">
+                                <h2 class="promo-modal-title">${CONFIG_PROMO.titulo}</h2>
                                 <p class="promo-modal-text"></p>
-                                <button class="promo-modal-add-btn">🛒 AGREGAR AL PEDIDO</button>
+                                <button class="promo-modal-add-btn">${CONFIG_PROMO.textoBoton}</button>
                             </div>
                         </div>
                     `;
@@ -2458,14 +2490,14 @@
 
                         // Efecto typewriter
                         const textElement = modalOverlay.querySelector('.promo-modal-text');
-                        const fullText = 'Dos cuarto de libras simple (pan de papa, medallón 120gr, cebolla brunoise, ketchup y mostaza) + 2 cocas de vidrio + papas fritas + envío gratis. - PRECIO: $22.990';
+                        const fullText = `${CONFIG_PROMO.descripcion} - PRECIO: $${formatPrice(CONFIG_PROMO.precio)}`;
                         let charIndex = 0;
 
                         function typeWriter() {
                             if (charIndex < fullText.length) {
                                 textElement.textContent = fullText.substring(0, charIndex + 1);
                                 charIndex++;
-                                setTimeout(typeWriter, 30); // Velocidad de escritura
+                                setTimeout(typeWriter, CONFIG_PROMO.velocidadTypewriter);
                             }
                         }
 
@@ -2479,14 +2511,14 @@
 
                             // Crear producto y variante en el formato que espera el carrito
                             const promoProduct = {
-                                id: 999, // ID único para la promo
-                                name: 'PROMO ENERO DIA 203453',
-                                image: 'assets/promo-combo.png'
+                                id: CONFIG_PROMO.id,
+                                name: CONFIG_PROMO.titulo,
+                                image: CONFIG_PROMO.imagen
                             };
 
                             const promoVariant = {
-                                type: 'Combo Completo: 2 Cuartos de Libra + 2 Cocas + Papas + Envío Gratis',
-                                price: 22990 // Precio de la promo: $22.990
+                                type: CONFIG_PROMO.varianteTipo,
+                                price: CONFIG_PROMO.precio
                             };
 
                             // Agregar al carrito usando el sistema existente
@@ -2523,7 +2555,7 @@
                     }
 
 
-                    // Auto-destrucción después de 30 segundos
+                    // Auto-destrucción después del tiempo configurado
                     setTimeout(() => {
                         promoContainer.classList.add('fade-out');
 
@@ -2531,9 +2563,9 @@
                         setTimeout(() => {
                             promoContainer.remove();
                         }, 600);
-                    }, 30000);
+                    }, CONFIG_PROMO.duracion);
 
-                }, 3000);
+                }, CONFIG_PROMO.delayInicial);
             };
         }
 
