@@ -54,6 +54,13 @@ function createWhatsAppMessage() {
         message += '\n';
     });
 
+    // Agregar total del pedido
+    const total = cart.getTotal();
+    message += `💰 Total: $${formatPrice(total)}\n\n`;
+
+    // Agregar alias
+    message += 'Alias: Alehartvig\n\n';
+
     message += 'Gracias.';
 
     return message;
