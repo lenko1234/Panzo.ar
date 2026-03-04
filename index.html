@@ -442,7 +442,7 @@
             transition: transform 0.3s ease;
         }
 
-        /* Loop seamless con crossfade (técnica de doble video) */
+        /* Loop seamless con crossfade JS-driven */
         .video-loop-container {
             position: relative;
             width: 100%;
@@ -456,33 +456,17 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+            transition: opacity 1.2s ease;
         }
 
-        .video-loop-container video:nth-child(1) {
+        .video-loop-container video.cf-active {
+            opacity: 1;
             z-index: 2;
-            animation: videoFadeInOut 10s infinite;
         }
 
-        .video-loop-container video:nth-child(2) {
+        .video-loop-container video.cf-inactive {
+            opacity: 0;
             z-index: 1;
-        }
-
-        @keyframes videoFadeInOut {
-            0% {
-                opacity: 1;
-            }
-
-            45% {
-                opacity: 1;
-            }
-
-            55% {
-                opacity: 0;
-            }
-
-            100% {
-                opacity: 0;
-            }
         }
 
         /* Ajuste específico para DESKTOP - para que no tape tanto */
@@ -1580,6 +1564,82 @@
                 text-shadow: 3px 3px 0 black !important;
             }
         }
+
+        /* === ENCARGUES === */
+        .encargue-overlay {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .encargue-badge-pill {
+            background: rgba(0, 0, 0, 0.75);
+            border: 2px solid var(--color-brand);
+            color: var(--color-white);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 999px;
+            backdrop-filter: blur(8px);
+            white-space: nowrap;
+        }
+
+        .encargue-purchase-bar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .encargue-notice {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            color: var(--color-brand);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .encargue-notice i {
+            font-size: 1rem;
+            color: var(--color-brand);
+        }
+
+        .btn-encargue {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            background: #25D366;
+            color: #fff;
+            border: none;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            padding: 14px 24px;
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.35);
+        }
+
+        .btn-encargue:hover {
+            background: #1ebe5d;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(37, 211, 102, 0.5);
+        }
+
+        .btn-encargue i {
+            font-size: 1.3rem;
+        }
     </style>
 </head>
 
@@ -1676,17 +1736,20 @@
             -->
         </section>
 
-        <!-- SECCIÓN SANGUCHES (NUEVO) -->
-        <section id="sanguches-section" class="feed-section" style="padding-top: var(--space-12);">
+        <!-- SECCIÓN ENCARGUES -->
+        <section id="encargues-section" class="feed-section" style="padding-top: var(--space-12);">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="fade-in-up">SANGUCHES</h2>
-                    <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem; color: var(--color-brand);">¡LO
-                        NUEVO!</p>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-1);">
+                        <h2 class="fade-in-up">ENCARGUES</h2>
+                        <p class="fade-in-up"
+                            style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-family: 'Space Grotesk', sans-serif; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+                            * solo por pedido previo · para el día siguiente *</p>
+                    </div>
                 </div>
 
-                <div id="sanguches-grid">
-                    <!-- Los sándwiches se generarán dinámicamente con JavaScript -->
+                <div id="encargues-grid">
+                    <!-- Los encargues se generarán dinámicamente con JavaScript -->
                 </div>
             </div>
         </section>
@@ -1774,7 +1837,7 @@
             </a>
             <div class="footer-links">
                 <a href="#menu">HAMBURGUESAS</a>
-                <a href="#sanguches-section">SANGUCHES</a>
+                <a href="#encargues-section">ENCARGUES</a>
                 <a href="#bebidas-section">BEBIDAS</a>
             </div>
             <p style="margin-top: var(--space-8); opacity: 0.5;">© 2025 Panzo - Estilo & Sabor.</p>
@@ -1852,14 +1915,16 @@
         // --- DATA: Hamburguesas (ACTIVO) ---
         const hamburguesas = [
             {
-                id: 500,
-                name: "COMBO ENAMORADOS",
-                ingredients: "2 Hamburguesas Cuarto de Libra + 2 Coca Cola de vidrio (237ml) + 2 Papas Fritas.",
-                image: "assets/optimized/combo-enamorados.webp",
-                badge: "PROMO DUO",
+                id: 105,
+                name: "THE BACON ISLAND",
+                ingredients: "Pan de papa, medallón de 120gr, cheddar, mermelada de bacon y salsa mil islas.",
+                icon: "ph-fill ph-hamburger",
+                badge: "🏝️ BURGER DEL MES",
+                video: "assets/Diseño sin título (6).mp4",
+                bgColor: "#e4e3e8",
                 variants: [
-                    { type: "2 Simples", price: 22900 },
-                    { type: "2 Dobles", price: 29500 }
+                    { type: "Simple", price: 11499 },
+                    { type: "Doble", price: 14599 }
                 ]
             },
             {
@@ -1901,31 +1966,20 @@
                     { type: "Triple", price: 17999 }
                 ]
             },
-            {
-                id: 102,
-                name: "LA TRAICIÓN 2.0",
-                ingredients: "Pan de papa, doble medallón, cebolla caramelizada, doble cheddar por medallón, salsa panzo y pepinillos.",
-                icon: "ph-fill ph-hamburger",
-                badge: "LA NUEVA",
-                video: "assets/LaTraicion2,0.mp4",
-                bgColor: "#e4e3e8",
-                variants: [
-                    { type: "Doble", price: 14499 },
-                    { type: "Triple", price: 17699 }
-                ]
-            }
         ];
 
-        const sanguches = [
+        const sanguches = [];
+
+        // --- DATA: Encargues (solo por pedido previo para el día siguiente) ---
+        const encargues = [
             {
                 id: 201,
-                name: "Los secretos de La Bondiola",
-                ingredients: "Pan de focaccia con topping de trocitos de milan, bondiola demechada a la cerveza, cebolla salteada, morron y cebolla de verdeo con mayonesa de barbacoa.",
+                name: "LA BONDIOLA",
+                subtitle: "Los secretos de la bondiola",
+                ingredients: "Pan de focaccia con topping de trocitos de milan, bondiola desmechada a la cerveza, cebolla salteada, morrón y cebolla de verdeo con mayonesa de barbacoa.",
                 video: "assets/freepik_a-cinematic-product-showcase-of-a-wide-thick-sandw_kling_1080p_9-16_24fps_31479.mp4",
-                badge: "LA JOYA",
-                variants: [
-                    { type: "Sándwich Completo", price: 13999 }
-                ]
+                badge: "ENCARGUE",
+                whatsappMsg: "Hola Panzo! Quiero hacer un encargue de LA BONDIOLA para mañana 🥖"
             }
         ];
 
@@ -2037,13 +2091,19 @@
                         // Diseño ORIGINAL para el resto de las burgers destacadas
                         featured.innerHTML = `
                             <div class="featured-media-container">
-                                <video autoplay muted loop playsinline>
-                                    <source src="${hamburguesa.video}" type="video/mp4">
-                                </video>
+                                <div class="video-loop-container">
+                                    <video autoplay muted playsinline class="cf-active">
+                                        <source src="${hamburguesa.video}" type="video/mp4">
+                                    </video>
+                                    <video muted playsinline class="cf-inactive">
+                                        <source src="${hamburguesa.video}" type="video/mp4">
+                                    </video>
+                                </div>
                             </div>
                             <div class="featured-content">
                                 <h2 class="featured-title">
                                     ${(() => {
+                                if (hamburguesa.name === 'THE BACON ISLAND') return '<span>THE BACON</span><span>ISLAND</span>';
                                 if (hamburguesa.name.includes('2.0')) return '<span>LA TRAICIÓN</span><span>2.0</span>';
                                 if (hamburguesa.name === 'LA CLÁSICA') return '<span>LA</span><span>CLÁSICA</span>';
                                 if (hamburguesa.name === 'LA TRAICIÓN') return '<span>LA</span><span>TRAICIÓN</span>';
@@ -2210,66 +2270,112 @@
             });
         }
 
-        // --- Renderizar Sanguches ---
-        function renderSanguches() {
-            const grid = document.getElementById('sanguches-grid');
+        // --- Renderizar Sanguches (vacío, mantenido por compatibilidad) ---
+        function renderSanguches() { /* sin sanguches regulares */ }
 
-            sanguches.forEach((sanguche, index) => {
-                const featured = document.createElement('div');
-                featured.className = 'featured-burger-section fade-in-up';
-                featured.style.transitionDelay = `${(index + 1) * 100}ms`;
+        // --- Renderizar Encargues ---
+        function renderEncargues() {
+            const container = document.getElementById('encargues-grid');
+            const WHATSAPP_NUMBER = '5492216817239';
 
-                const initialPrice = sanguche.variants[0].price;
+            encargues.forEach((item, index) => {
+                const section = document.createElement('div');
+                section.className = 'featured-burger-section fade-in-up encargue-item';
+                section.style.transitionDelay = `${(index + 1) * 100}ms`;
 
-                featured.innerHTML = `
+                const nameParts = item.name.split(' ');
+                const titleHtml = nameParts.length >= 3
+                    ? `<span>${nameParts.slice(0, -1).join(' ')}</span><span>${nameParts[nameParts.length - 1]}</span>`
+                    : `<span>${nameParts[0]}</span><span>${nameParts.slice(1).join(' ')}</span>`;
+
+                const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(item.whatsappMsg)}`;
+
+                section.innerHTML = `
                     <div class="featured-media-container">
-                        ${sanguche.video ? `
-                            <div class="video-loop-container">
-                                <video autoplay muted loop playsinline>
-                                    <source src="${sanguche.video}" type="video/mp4">
-                                </video>
-                                <video autoplay muted loop playsinline>
-                                    <source src="${sanguche.video}" type="video/mp4">
-                                </video>
-                            </div>
-                        ` : `
-                            <img src="${sanguche.image}" alt="${sanguche.name}" loading="lazy">
-                        `}
+                        <div class="video-loop-container">
+                            <video autoplay muted playsinline class="cf-active">
+                                <source src="${item.video}" type="video/mp4">
+                            </video>
+                            <video muted playsinline class="cf-inactive">
+                                <source src="${item.video}" type="video/mp4">
+                            </video>
+                        </div>
+                        <div class="encargue-overlay">
+                            <div class="encargue-badge-pill">📅 SOLO POR ENCARGUE</div>
+                        </div>
                     </div>
                     <div class="featured-content">
-                        <h2 class="featured-title">
-                            <span>LOS SECRETOS</span>
-                            <span>DE LA BONDIOLA</span>
-                        </h2>
+                        <h2 class="featured-title">${titleHtml}</h2>
                     </div>
 
-                    <p class="featured-tagline">${sanguche.ingredients}</p>
-                    
-                    <div class="featured-purchase-bar">
-                        <div class="purchase-row">
-                            <div class="variants-pills">
-                                ${sanguche.variants.map((variant, vIndex) => `
-                                    <button 
-                                        class="variant-pill ${vIndex === 0 ? 'active' : ''}" 
-                                        data-sanguche-id="${sanguche.id}" 
-                                        data-variant-index="${vIndex}"
-                                        data-price="${variant.price}"
-                                    >
-                                        ${variant.type}
-                                    </button>
-                                `).join('')}
-                            </div>
-                            <div class="price-display" data-price-display="${sanguche.id}">${formatPrice(initialPrice)}</div>
+                    <p class="featured-tagline">${item.ingredients}</p>
+
+                    <div class="featured-purchase-bar encargue-purchase-bar">
+                        <div class="encargue-notice">
+                            <i class="ph-bold ph-clock"></i>
+                            <span>Pedido previo · entrega al día siguiente</span>
                         </div>
-                        
-                        <button class="btn btn-outline add-to-cart-btn" data-product-id="${sanguche.id}" style="width: 100%;">
-                            <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
-                        </button>
+                        <a href="${waLink}" target="_blank" class="btn btn-encargue" style="width: 100%;">
+                            <i class="ph-bold ph-whatsapp-logo"></i> ENCARGAR AHORA
+                        </a>
                     </div>
-                    `;
+                `;
 
-                // Insertamos antes del grid para que tenga el mismo comportamiento que las burgers
-                grid.parentNode.insertBefore(featured, grid);
+                container.parentNode.insertBefore(section, container);
+            });
+        }
+
+        // --- Crossfade seamless loop (sin oscurecimiento) ---
+        function setupCrossfadeLoops() {
+            document.querySelectorAll('.video-loop-container').forEach(container => {
+                const vids = container.querySelectorAll('video');
+                if (vids.length < 2) return;
+
+                let va = vids[0]; // activo (se ve)
+                let vb = vids[1]; // en espera (oculto)
+                let swapping = false;
+
+                // Estado inicial vía inline styles
+                va.style.cssText += ';position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:2;opacity:1;';
+                vb.style.cssText += ';position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:1;opacity:0;';
+
+                function swap() {
+                    if (swapping) return;
+                    swapping = true;
+
+                    // 1. Traer vb al frente (encima de va) a opacity 0, sin transición
+                    vb.style.transition = 'none';
+                    vb.style.zIndex = '3';
+                    vb.style.opacity = '0';
+                    vb.currentTime = 0;
+                    vb.play();
+
+                    // 2. En el siguiente frame, fade IN de vb (va sigue al 100% debajo → sin oscurecer)
+                    requestAnimationFrame(() => requestAnimationFrame(() => {
+                        vb.style.transition = 'opacity 1.2s ease';
+                        vb.style.opacity = '1';
+                    }));
+
+                    // 3. Después del fade, ocultar va (ya detrás de vb)
+                    setTimeout(() => {
+                        va.style.transition = 'none';
+                        va.style.opacity = '0';
+                        va.style.zIndex = '1';
+                        vb.style.zIndex = '2';
+                        vb.style.transition = '';
+                        [va, vb] = [vb, va];
+                        swapping = false;
+                    }, 1400);
+                }
+
+                // Disparar swap cuando el video activo le quedan ~1.5s
+                vids.forEach(v => {
+                    v.addEventListener('timeupdate', () => {
+                        if (v === va && v.duration && (v.duration - v.currentTime) <= 1.5) {
+                            swap();
+                        }
+                    });
+                });
             });
         }
 
@@ -2277,6 +2383,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderHamburguesas();
             renderSanguches();
+            renderEncargues();
             renderBebidas();
             console.log('Productos renderizados:', document.querySelectorAll('.post-card').length);
             connectCartButtons();
@@ -2291,6 +2398,9 @@
                         el.classList.add('visible');
                     }
                 });
+
+                // Iniciar crossfade en todos los videos de featured
+                setupCrossfadeLoops();
             }, 150);
         });
 
