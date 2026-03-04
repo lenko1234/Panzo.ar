@@ -1558,6 +1558,23 @@
             transform: translateX(4px);
         }
 
+        /* === BURGER DEL MES BADGE === */
+        .burger-mes-badge {
+            display: inline-block;
+            background: var(--color-brand);
+            color: var(--color-white);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 6px 16px;
+            border-radius: 999px;
+            margin-bottom: var(--space-3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border: 2px solid white;
+        }
+
         /* Ajuste de sombra del CTA en mobile */
         @media (max-width: 768px) {
             .cta-title {
@@ -2086,7 +2103,6 @@
                         // Diseño ORIGINAL para el resto de las burgers destacadas
                         featured.innerHTML = `
                             <div class="featured-media-container">
-                                ${hamburguesa.badge ? `<div class="encargue-overlay"><div class="encargue-badge-pill" style="background: var(--color-brand); border-color: white;">${hamburguesa.badge}</div></div>` : ''}
                                 <div class="video-loop-container">
                                     <video autoplay muted playsinline class="cf-active">
                                         <source src="${hamburguesa.video}" type="video/mp4">
@@ -2097,6 +2113,7 @@
                                 </div>
                             </div>
                             <div class="featured-content">
+                                ${hamburguesa.badge ? `<div class="burger-mes-badge">${hamburguesa.badge}</div>` : ''}
                                 <h2 class="featured-title">
                                     ${(() => {
                                 if (hamburguesa.name === 'THE BACON ISLAND') return '<span>THE BACON</span><span>ISLAND</span>';
