@@ -1932,7 +1932,6 @@
                 name: "LA CLÁSICA",
                 ingredients: "Pan de papa, medallón de 120gr, doble cheddar, lechuga repollada, tomate y mayonesa Hellmann's.",
                 icon: "ph-fill ph-hamburger",
-                badge: "FAVORITA",
                 video: "assets/Diseño sin título (4).mp4",
                 bgColor: "#e4e3e8",
                 variants: [
@@ -1945,7 +1944,6 @@
                 name: "CUARTO DE LIBRA",
                 ingredients: "Medallón de 120gr, doble cheddar por medallón, cebolla brunoise, kétchup y mostaza.",
                 icon: "ph-fill ph-hamburger",
-                badge: "NUEVA",
                 video: "assets/Diseño sin título (5).mp4",
                 bgColor: "#e4e3e8",
                 variants: [
@@ -1958,7 +1956,6 @@
                 name: "LA TRAICIÓN",
                 ingredients: "Pan de papa, doble medallón de 120gr, bacon, doble cheddar por medallón, cebolla y nuestra salsa golf especial.",
                 icon: "ph-fill ph-hamburger",
-                badge: "LA NUEVA",
                 video: "assets/VideoBurgerNew.mp4",
                 bgColor: "#e4e3e8",
                 variants: [
@@ -1978,7 +1975,6 @@
                 subtitle: "Los secretos de la bondiola",
                 ingredients: "Pan de focaccia con topping de trocitos de milan, bondiola desmechada a la cerveza, cebolla salteada, morrón y cebolla de verdeo con mayonesa de barbacoa.",
                 video: "assets/freepik_a-cinematic-product-showcase-of-a-wide-thick-sandw_kling_1080p_9-16_24fps_31479.mp4",
-                badge: "ENCARGUE",
                 whatsappMsg: "Hola Panzo! Quiero hacer un encargue de LA BONDIOLA para mañana 🥖"
             }
         ];
@@ -2007,7 +2003,6 @@
                 description: "Pack de cerveza marca Corona por 6 unidades",
                 image: "assets/optimized/corona.webp",
                 price: 15000,
-                badge: "PACK x6",
                 icon: "ph-fill ph-package"
             }
         ];
@@ -2091,6 +2086,7 @@
                         // Diseño ORIGINAL para el resto de las burgers destacadas
                         featured.innerHTML = `
                             <div class="featured-media-container">
+                                ${hamburguesa.badge ? `<div class="encargue-overlay"><div class="encargue-badge-pill" style="background: var(--color-brand); border-color: white;">${hamburguesa.badge}</div></div>` : ''}
                                 <div class="video-loop-container">
                                     <video autoplay muted playsinline class="cf-active">
                                         <source src="${hamburguesa.video}" type="video/mp4">
