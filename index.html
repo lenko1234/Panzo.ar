@@ -16,11 +16,12 @@
     <link rel="dns-prefetch" href="https://images.unsplash.com">
 
     <!-- Preload de fuente crítica para LCP -->
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@500;700;900&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Open+Sans:wght@500;600;700&family=Space+Grotesk:wght@500;700;900&display=swap"
         rel="stylesheet" media="print" onload="this.media='all'">
     <noscript>
         <link
-            href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@500;700;900&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Open+Sans:wght@500;600;700&family=Space+Grotesk:wght@500;700;900&display=swap"
             rel="stylesheet">
     </noscript>
 
@@ -28,8 +29,27 @@
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
     <style>
+        /* Definición de fuentes personalizadas del nuevo diseño */
+        @font-face {
+            font-family: 'Extenda Peta';
+            src: url('assets/new design/EXTENDA-80-PETA-TRIAL.TTF') format('truetype');
+            font-weight: 800;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Yellowtail';
+            src: url('assets/new design/Yellowtail-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         /* --- 1. SISTEMA DE DISEÑO (GRILLA 8PT) --- */
         :root {
+            /* NUEVOS COLORES DESIGN */
+            --nd-bg: #9B1C10;
+            --nd-card-bg: #F4E2AC;
+            --nd-accent: #E58620;
             /* PALETA: ROJO PANZO (Basada en tu imagen) */
             --color-brand: #C01117;
             /* Rojo vibrante */
@@ -90,9 +110,10 @@
             width: 100%;
             height: 100vh;
             z-index: -1;
-            background-color: white;
-            background-image: conic-gradient(var(--color-brand-dark) 90deg, white 90deg 180deg, var(--color-brand-dark) 180deg 270deg, white 270deg);
-            background-size: 100px 100px;
+            background-color: var(--nd-card-bg);
+            /* Cambiado al crema del diseño nuevo */
+            background-image: conic-gradient(var(--nd-bg) 90deg, var(--nd-card-bg) 90deg 180deg, var(--nd-bg) 180deg 270deg, var(--nd-card-bg) 270deg);
+            background-size: 60px 60px;
             background-repeat: repeat;
             opacity: 0;
             visibility: hidden;
@@ -363,6 +384,7 @@
             width: 100%;
             overflow: hidden;
             position: relative;
+            margin-block: 10px;
         }
 
         .marquee {
@@ -400,9 +422,9 @@
 
         /* --- 7. GRID TIPO INSTAGRAM --- */
         .feed-section {
-            padding-block: var(--space-16);
-            background-color: var(--color-dark);
-            color: var(--color-white);
+            padding-block: var(--space-4); /* Reducido de space-8 */
+            background-color: var(--nd-bg);
+            color: var(--nd-card-bg);
         }
 
         /* --- FEATURED BURGER (LAB STYLE) --- */
@@ -1226,13 +1248,19 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 4px 8px;
+            padding: 4px 12px;
             cursor: pointer;
             transition: all 0.2s ease;
             user-select: none;
             margin: 0;
-            border: none;
+            border: 2px solid transparent;
             background: transparent;
+            border-radius: 8px;
+        }
+
+        .veggie-toggle-container.active {
+            background-color: rgba(40, 167, 69, 0.1);
+            border-color: var(--color-veggie);
         }
 
         .veggie-label {
@@ -1269,23 +1297,26 @@
             background: white;
             border-radius: 50%;
             transition: transform 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .veggie-checkbox:checked + .veggie-switch {
+        .veggie-checkbox:checked+.veggie-switch {
             background: var(--color-veggie);
         }
 
-        .veggie-checkbox:checked + .veggie-switch::after {
+        .veggie-checkbox:checked+.veggie-switch::after {
             transform: translateX(14px);
         }
 
         /* Estilo para el botón al activarse */
-        .add-to-cart-btn.veggie-active {
+        .add-to-cart-btn.veggie-active,
+        .nd-order-btn.veggie-active {
             background: var(--color-veggie) !important;
             border-color: var(--color-veggie) !important;
             box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4) !important;
+            color: white !important;
         }
+
         .cart-header {
             padding: var(--space-6);
             border-bottom: var(--border-thick);
@@ -1724,6 +1755,206 @@
         .btn-encargue i {
             font-size: 1.3rem;
         }
+
+        /* --- ESTILOS NUEVO DISEÑO (SCOPED) --- */
+        .new-design-container {
+            width: 100%;
+            background-color: transparent;
+            padding: 10px 0;
+            margin-top: 0;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .nd-title {
+            font-family: 'Extenda Peta', sans-serif;
+            font-size: clamp(4rem, 16vw, 11rem);
+            color: var(--nd-card-bg);
+            text-align: center;
+            margin: 0; /* Sin márgenes para centrar bien */
+            line-height: 0.8;
+            text-transform: uppercase;
+        }
+
+        .nd-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        @media (max-width: 600px) {
+            .nd-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .nd-card {
+            background-color: var(--nd-card-bg);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 4px;
+        }
+
+        .nd-card-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-bottom: 5px;
+            min-height: 80px;
+        }
+
+        .nd-card-logo {
+            height: 75px;
+            object-fit: contain;
+        }
+
+        .nd-card-inner {
+            background-color: var(--nd-bg);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid var(--nd-bg);
+            flex: 1;
+            position: relative;
+            min-height: 230px;
+            overflow: visible;
+        }
+
+        .nd-card-title {
+            font-family: 'Yellowtail', cursive;
+            color: var(--nd-card-bg);
+            font-size: clamp(1.8rem, 5.8vw, 3.8rem);
+            /* Un poco más grande */
+            text-align: center;
+            margin: 0;
+            line-height: 0.85;
+            font-weight: normal;
+            position: relative;
+            z-index: 2;
+            top: -0.3em;
+            white-space: nowrap;
+            text-shadow:
+                -2px -2px 0 var(--nd-bg),
+                2px -2px 0 var(--nd-bg),
+                -2px 2px 0 var(--nd-bg),
+                2px 2px 0 var(--nd-bg),
+                -4px 0 0 var(--nd-bg),
+                4px 0 0 var(--nd-bg),
+                0 -4px 0 var(--nd-bg),
+                0 4px 0 var(--nd-bg);
+        }
+
+        .nd-card-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(2.5);
+            width: 100%;
+            max-height: 180px;
+            object-fit: contain;
+            z-index: 1;
+            pointer-events: none;
+            /* Crucial: para que no tape los clicks */
+        }
+
+        .nd-card-ingredients {
+            font-family: 'Extenda Peta', sans-serif;
+            color: var(--nd-card-bg);
+            font-size: 0.7rem;
+            text-align: center;
+            text-transform: uppercase;
+            line-height: 1.1;
+            margin-top: auto;
+            position: relative;
+            z-index: 2;
+            padding-bottom: 5px;
+        }
+
+        .nd-card-footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 15px;
+            gap: 15px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .nd-price-box {
+            display: flex;
+            gap: 6px;
+            align-items: baseline;
+            color: var(--nd-bg);
+            line-height: 1;
+            cursor: pointer;
+            opacity: 0.4;
+            transition: opacity 0.2s;
+        }
+
+        .nd-price-box.active {
+            opacity: 1;
+        }
+
+        .nd-price-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .nd-price-amount {
+            font-family: 'Archivo Black', sans-serif;
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+        }
+
+        .nd-order-btn {
+            background-color: var(--nd-bg);
+            color: var(--nd-card-bg);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.3rem;
+            border: 3px solid var(--nd-bg);
+            border-radius: 8px;
+            padding: 8px;
+            width: 100%;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.05em;
+        }
+
+        .nd-order-btn:hover {
+            background-color: var(--nd-card-bg);
+            color: var(--nd-bg);
+            transform: translateY(-4px);
+            box-shadow: 4px 4px 0px var(--nd-bg);
+        }
+
+        .nd-veggie-pills {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .new-design-container.has-mantel {
+            background-color: transparent !important;
+        }
+
+        #menu .section-header {
+            margin-bottom: 0 !important;
+            padding-block: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 
@@ -1777,7 +2008,7 @@
         </section>
 
         <!-- MARQUEE (CINTA) -->
-        <div class="marquee-container">
+        <div class="marquee-container has-mantel">
             <div class="marquee">
                 <div class="marquee-inner">
                     <span>• HECHO A MANO •</span>
@@ -1796,18 +2027,20 @@
         <section id="menu" class="feed-section" style="padding-bottom: 0;">
             <div class="container">
                 <div class="section-header">
-                    <div style="display: flex; flex-direction: column; gap: var(--space-1);">
-                        <h2 class="fade-in-up">HAMBURGUESAS</h2>
-                        <p class="fade-in-up"
-                            style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-family: 'Space Grotesk', sans-serif; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
-                            * todas incluyen papas *</p>
+                    <div style="display: flex; flex-direction: column; gap: var(--space-1); width: 100%;">
+                        <h2 class="nd-title fade-in-up">BURGERS</h2>
                     </div>
                 </div>
+            </div>
 
-                <div class="feed-grid" id="hamburguesas-grid">
+            <div class="new-design-container has-mantel">
+                <div class="nd-grid" id="hamburguesas-grid">
                     <!-- Las tarjetas se generarán dinámicamente con JavaScript -->
                 </div>
             </div>
+
+            <!-- Borde Checkerboard Inferior NO es necesario con el fondo parallax -->
+            <!-- <div class="checkerboard" style="margin-top: 40px;"></div> -->
             <!-- Aviso si no hay hamburguesas cargadas -->
             <div id="hamburguesas-placeholder" style="text-align: center; padding: var(--space-10) var(--space-6);">
                 <p style="opacity: 0.5; font-style: italic;">Nuevas burguers en camino...</p>
@@ -2002,10 +2235,8 @@
                 id: 108,
                 name: "COMBO CLÁSICA",
                 ingredients: "1 CLÁSICA + 1 PAPAS FRITAS SAZONADAS + 1 GASEOSA DE VIDRIO A ELECCIÓN.",
-                icon: "ph-fill ph-hamburger",
-                badge: "🔥 PROMO IMPERDIBLE",
-                image: "assets/promo-clasica.jpg",
-                bgColor: "#9B1C10",
+                image: "assets/new design/clasica.png",
+                logo: "assets/logo-panzo.png",
                 variants: [
                     { type: "PROMO", price: 11999 }
                 ]
@@ -2014,10 +2245,8 @@
                 id: 105,
                 name: "THE BACON ISLAND",
                 ingredients: "Pan, medallón de 120gr, cheddar, mermelada de bacon y salsa mil islas.",
-                icon: "ph-fill ph-hamburger",
-                badge: "🏝️ BURGER DEL MES",
-                video: "assets/Diseño sin título (6).mp4",
-                bgColor: "#e4e3e8",
+                image: "assets/new design/burgerdelmes.png",
+                logo: "assets/logo-panzo.png",
                 variants: [
                     { type: "Simple", price: 11499 },
                     { type: "Doble", price: 14599 }
@@ -2027,9 +2256,8 @@
                 id: 103,
                 name: "LA CLÁSICA",
                 ingredients: "Pan, medallón de 120gr, doble cheddar, lechuga repollada, tomate y mayonesa Hellmann's.",
-                icon: "ph-fill ph-hamburger",
-                video: "assets/Diseño sin título (4).mp4",
-                bgColor: "#e4e3e8",
+                image: "assets/new design/clasica.png",
+                logo: "assets/logo-panzo.png",
                 variants: [
                     { type: "Simple", price: 9999 },
                     { type: "Doble", price: 13999 }
@@ -2039,9 +2267,8 @@
                 id: 104,
                 name: "CUARTO DE LIBRA",
                 ingredients: "Medallón de 120gr, doble cheddar por medallón, cebolla brunoise, kétchup y mostaza.",
-                icon: "ph-fill ph-hamburger",
-                video: "assets/Diseño sin título (5).mp4",
-                bgColor: "#e4e3e8",
+                image: "assets/new design/cuartodelibra.png",
+                logo: "assets/logo-panzo.png",
                 variants: [
                     { type: "Simple", price: 10499 },
                     { type: "Doble", price: 13999 }
@@ -2051,9 +2278,8 @@
                 id: 101,
                 name: "LA TRAICIÓN",
                 ingredients: "Pan, doble medallón de 120gr, bacon, doble cheddar por medallón, cebolla y nuestra salsa golf especial.",
-                icon: "ph-fill ph-hamburger",
-                video: "assets/VideoBurgerNew.mp4",
-                bgColor: "#e4e3e8",
+                image: "assets/new design/traicion.png",
+                logo: "assets/logo-panzo.png",
                 variants: [
                     { type: "Doble", price: 13999 },
                     { type: "Triple", price: 17999 }
@@ -2103,13 +2329,17 @@
             }
         ];
 
-        // --- Función para formatear precio ---
+        // --- Función para formatear precio (Movida arriba para disponibilidad global) ---
         function formatPrice(price) {
             return price.toLocaleString('es-AR');
         }
 
+        // Un objeto global para guardar la variante seleccionada de cada burger
+        window.selectedBurgerVariants = window.selectedBurgerVariants || {};
+
         // --- Renderizar Hamburguesas ---
         function renderHamburguesas() {
+            console.log('Iniciando render de hamburguesas...');
             const grid = document.getElementById('hamburguesas-grid');
             const placeholder = document.getElementById('hamburguesas-placeholder');
 
@@ -2118,209 +2348,100 @@
             }
 
             hamburguesas.forEach((hamburguesa, index) => {
-                // Si la hamburguesa tiene video o es una promo destacada, la tratamos como destacada
-                if (hamburguesa.video || [500, 108].includes(hamburguesa.id)) {
-                    const featured = document.createElement('div');
-                    featured.className = 'featured-burger-section fade-in-up';
-
-                    const initialPrice = hamburguesa.variants[0].price;
-
-                         if ([500, 108].includes(hamburguesa.id)) {
-                             // Diseño EXTENDIDO para que la barra quede AFUERA de la imagen
-                             featured.style.minHeight = '120vh'; // Más de una pantalla
-                             featured.style.display = 'flex';
-                             featured.style.flexDirection = 'column';
-                             featured.style.padding = '0';
-                             featured.style.background = 'black'; // Fondo para lo que quede afuera
-     
-                             featured.innerHTML = `
-                                 <!-- Contenedor de Imagen a pantalla completa -->
-                                 <div style="position: relative; width: 100%; height: 100vh; overflow: hidden; flex-shrink: 0; background: black;">
-                                     <div class="featured-media-container" style="z-index: 1;">
-                                         <img src="${hamburguesa.image}" alt="${hamburguesa.name}" 
-                                              style="width: 100%; height: 100%; object-fit: contain; transform: scale(1) !important;">
-                                     </div>
-                                     
-                                     <!-- Título e ingredientes flotando sobre la imagen -->
-                                     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; align-items: center;">
-                                         <div class="featured-content" style="padding: 20px 0; pointer-events: none;">
-                                             <h2 class="featured-title" style="font-size: clamp(2.5rem, 12vw, 6rem); text-shadow: 0 4px 30px rgba(0,0,0,0.7); line-height: 0.9;">
-                                                 ${hamburguesa.id === 500 ? '<span>COMBO</span><span>ENAMORADOS</span>' : '<span>COMBO</span><span>CLÁSICA</span>'}
-                                             </h2>
-                                         </div>
-                                         <div style="margin-top: auto; width: 100%; padding: 60px 20px 40px; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);">
-                                             <p style="color: white; font-family: 'Outfit', sans-serif; font-size: clamp(0.9rem, 1.2vw, 1.1rem); text-align: center; max-width: 500px; margin: 0 auto; line-height: 1.4; font-weight: 400; opacity: 0.9; text-transform: uppercase; letter-spacing: 2px; text-shadow: 1px 1px 10px rgba(0,0,0,0.5);">
-                                                 ${hamburguesa.ingredients}
-                                             </p>
-                                         </div>
-                                     </div>
-                                 </div>
-     
-                                 <!-- BARRA DE COMPRA AFUERA DEL LÍMITE (Debajo de la imagen) -->
-                                 <div style="width: 100%; background: #111; padding: 25px 20px; display: flex; justify-content: center; z-index: 20;">
-                                     <div class="featured-purchase-bar" style="position: relative; bottom: auto; left: auto; transform: none; margin: 0; width: 100%; max-width: 420px; box-shadow: none; border-color: rgba(255,255,255,0.1);">
-                                         <div class="purchase-row">
-                                             <div class="variants-pills">
-                                                 ${hamburguesa.variants.map((variant, vIndex) => `
-                                                     <button 
-                                                         class="variant-pill ${vIndex === 0 ? 'active' : ''}" 
-                                                         data-sanguche-id="${hamburguesa.id}" 
-                                                         data-variant-index="${vIndex}"
-                                                         data-price="${variant.price}"
-                                                     >
-                                                         ${variant.type}
-                                                     </button>
-                                                 `).join('')}
-                                                 
-                                                 <!-- VEGGIE TOGGLE EN LA MISMA LÍNEA -->
-                                                 <label class="veggie-toggle-container" onclick="handleVeggieToggle(${hamburguesa.id})">
-                                                     <span class="veggie-label">OPCIÓN VEGGIE</span>
-                                                     <input type="checkbox" class="veggie-checkbox" id="veggie-check-${hamburguesa.id}">
-                                                     <div class="veggie-switch"></div>
-                                                 </label>
-                                             </div>
-                                             <div class="price-display" data-price-display="${hamburguesa.id}">${formatPrice(initialPrice)}</div>
-                                         </div>
-                                         
-                                         <div style="max-width: 500px; margin: 10px auto 0;">
-                                             <button id="add-btn-${hamburguesa.id}" class="btn btn-outline add-to-cart-btn" data-product-id="${hamburguesa.id}" style="width: 100%;">
-                                                 <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
-                                             </button>
-                                         </div>
-                                     </div>
-                                 </div>
-                             `;
-                         } else {
-                        // Diseño ORIGINAL para el resto de las burgers destacadas
-                        featured.innerHTML = `
-                            <div class="featured-media-container">
-                                <div class="video-loop-container">
-                                    <video autoplay muted playsinline class="cf-active" style="object-fit: cover; transform: scale(1.1) !important;">
-                                        <source src="${hamburguesa.video}" type="video/mp4">
-                                    </video>
-                                    <video muted playsinline class="cf-inactive" style="object-fit: cover; transform: scale(1.1) !important;">
-                                        <source src="${hamburguesa.video}" type="video/mp4">
-                                    </video>
-                                </div>
-                            </div>
-                            
-                            <div class="featured-content">
-                                ${hamburguesa.badge ? `<div class="burger-mes-badge">${hamburguesa.badge}</div>` : ''}
-                                <h2 class="featured-title">
-                                    ${(() => {
-                                if (hamburguesa.name === 'THE BACON ISLAND') return '<span>THE BACON</span><span>ISLAND</span>';
-                                if (hamburguesa.name.includes('2.0')) return '<span>LA TRAICIÓN</span><span>2.0</span>';
-                                if (hamburguesa.name === 'LA CLÁSICA') return '<span>LA</span><span>CLÁSICA</span>';
-                                if (hamburguesa.name === 'LA TRAICIÓN') return '<span>LA</span><span>TRAICIÓN</span>';
-                                if (hamburguesa.name === 'CUARTO DE LIBRA') return '<span>CUARTO</span><span>DE LIBRA</span>';
-                                const parts = hamburguesa.name.split(' ');
-                                return `<span>${parts[0]}</span><span>${parts.slice(1).join(' ')}</span>`;
-                            })()}
-                                </h2>
-                            </div>
-
-                            <p class="featured-tagline">${hamburguesa.ingredients}</p>
-                            
-                            <div class="featured-purchase-bar">
-                                <div class="purchase-row">
-                                    <div class="variants-pills">
-                                        ${hamburguesa.variants.map((variant, vIndex) => `
-                                            <button 
-                                                class="variant-pill ${vIndex === 0 ? 'active' : ''}" 
-                                                data-sanguche-id="${hamburguesa.id}" 
-                                                data-variant-index="${vIndex}"
-                                                data-price="${variant.price}"
-                                            >
-                                                ${variant.type}
-                                            </button>
-                                        `).join('')}
-                                        
-                                        <!-- VEGGIE TOGGLE EN LA MISMA LÍNEA -->
-                                        <label class="veggie-toggle-container" onclick="handleVeggieToggle(${hamburguesa.id})">
-                                            <span class="veggie-label">OPCIÓN VEGGIE</span>
-                                            <input type="checkbox" class="veggie-checkbox" id="veggie-check-${hamburguesa.id}">
-                                            <div class="veggie-switch"></div>
-                                        </label>
-                                    </div>
-                                    <div class="price-display" data-price-display="${hamburguesa.id}">${formatPrice(initialPrice)}</div>
-                                </div>
-                                
-                                <button id="add-btn-${hamburguesa.id}" class="btn btn-outline add-to-cart-btn" data-product-id="${hamburguesa.id}" style="width: 100%; margin-top: 10px;">
-                                    <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
-                                </button>
-                            </div>
-                        `;
-                    }
-
-                    grid.parentNode.insertBefore(featured, grid);
-                    return;
+                // Inicializar variante por defecto si no existe
+                if (window.selectedBurgerVariants[hamburguesa.id] === undefined) {
+                    window.selectedBurgerVariants[hamburguesa.id] = 0;
                 }
 
-                const card = document.createElement('article');
-                card.className = 'post-card fade-in-up';
+                const card = document.createElement('div');
+                card.className = 'nd-card fade-in-up';
                 card.style.transitionDelay = `${(index + 1) * 100}ms`;
 
-                const initialPrice = hamburguesa.variants[0].price;
-                const imageContent = hamburguesa.image
-                    ? `<img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async">`
-                    : `<div style="width: 100%; height: 100%; background: ${hamburguesa.gradient || 'var(--color-brand)'}; display: flex; align-items: center; justify-content: center;">
-                            <i class="${hamburguesa.icon}" style="font-size: 8rem; color: var(--color-white); opacity: 0.3;"></i>
-                       </div>`;
+                // Limpiar ingredientes: buscar números y envolverlos en Archivo Black para legibilidad
+                const readableIngredients = hamburguesa.ingredients.replace(/(\d+)/g, '<span style="font-family: \'Archivo Black\', sans-serif; font-size: 1.1em; letter-spacing: 0;">$1</span>');
 
                 card.innerHTML = `
-                    <div class="post-header">
-                        <div class="avatar-circle"></div>
-                        <span class="post-username">panzo.ar</span>
+                    <div class="nd-card-header">
+                        <img src="${hamburguesa.logo || 'assets/logo-panzo.png'}" alt="Panzo" class="nd-card-logo">
                     </div>
-                    <div class="post-img-container">
-                        ${hamburguesa.badge ? `<div class="badge-new">${hamburguesa.badge}</div>` : ''}
-                        ${imageContent}
+                    <div class="nd-card-inner">
+                        <h2 class="nd-card-title">${hamburguesa.name}</h2>
+                        <img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="nd-card-image">
+                        <p class="nd-card-ingredients">${readableIngredients}</p>
                     </div>
-                    <div class="post-footer">
-                        <div class="post-actions">
-                            <i class="ph-fill ph-heart" style="color: var(--color-brand)"></i>
-                            <i class="ph ph-chat-circle"></i>
-                        </div>
-                        <p class="post-caption">
-                            <span style="font-weight: 900;">${hamburguesa.name}.</span>
-                            ${hamburguesa.ingredients}
-                        </p>
-
-                        <div class="variants-container">
-                            <div class="variants-pills">
-                                ${hamburguesa.variants.map((variant, vIndex) => `
-                                    <button 
-                                        class="variant-pill ${vIndex === 0 ? 'active' : ''}" 
-                                        data-sanguche-id="${hamburguesa.id}" 
-                                        data-variant-index="${vIndex}"
-                                        data-price="${variant.price}"
-                                    >
-                                        ${variant.type}
-                                    </button>
-                                `).join('')}
-                                
-                                <!-- VEGGIE TOGGLE EN LA MISMA LÍNEA -->
-                                <label class="veggie-toggle-container" onclick="handleVeggieToggle(${hamburguesa.id})">
-                                    <span class="veggie-label">OPCIÓN VEGGIE</span>
-                                    <input type="checkbox" class="veggie-checkbox" id="veggie-check-${hamburguesa.id}">
-                                    <div class="veggie-switch"></div>
-                                </label>
+                    <div class="nd-card-footer">
+                        ${hamburguesa.variants.map((variant, vIndex) => `
+                            <div class="nd-price-box ${vIndex === window.selectedBurgerVariants[hamburguesa.id] ? 'active' : ''} variant-pill" 
+                                 data-sanguche-id="${hamburguesa.id}" 
+                                 data-variant-index="${vIndex}"
+                                 data-price="${variant.price}"
+                                 onclick="handleVariantVisualClick(this, ${hamburguesa.id}, ${vIndex})">
+                                <span class="nd-price-label">${variant.type}</span>
+                                <span class="nd-price-amount">$${formatPrice(variant.price)}</span>
                             </div>
-                            <div class="price-display" data-price-display="${hamburguesa.id}">${formatPrice(initialPrice)}</div>
-                        </div>
-                        <button id="add-btn-${hamburguesa.id}" class="btn btn-outline add-to-cart-btn" data-product-id="${hamburguesa.id}" style="width: 100%; margin-top: var(--space-4); font-size: 1rem; padding: 10px;">
-                            <i class="ph-bold ph-shopping-cart"></i> AGREGAR AL PEDIDO
-                        </button>
+                        `).join('')}
                     </div>
-                    `;
+
+                    <!-- OPCIÓN VEGGIE -->
+                    <div class="nd-veggie-pills">
+                        <label class="veggie-toggle-container" style="transform: scale(0.9);">
+                            <span class="veggie-label">OPCIÓN VEGGIE</span>
+                            <input type="checkbox" class="veggie-checkbox" id="veggie-check-${hamburguesa.id}" onchange="handleVeggieToggle(${hamburguesa.id})">
+                            <div class="veggie-switch"></div>
+                        </label>
+                    </div>
+
+                    <button id="add-btn-${hamburguesa.id}" class="nd-order-btn" data-product-id="${hamburguesa.id}" onclick="handleAddToCartClick(${hamburguesa.id})">
+                        AGREGAR AL PEDIDO
+                    </button>
+                `;
 
                 grid.appendChild(card);
             });
+            console.log('Render de hamburguesas finalizado.');
+        }
 
-            // Agregar event listeners a los pills
-            document.querySelectorAll('.variant-pill').forEach(pill => {
-                pill.addEventListener('click', handleVariantClick);
-            });
+        // --- Manejo Visual y de Datos de las variantes ---
+        function handleVariantVisualClick(element, burgerId, variantIndex) {
+            console.log('Cambio de variante:', burgerId, 'Índice:', variantIndex);
+            // Guardar en el objeto global
+            window.selectedBurgerVariants[burgerId] = variantIndex;
+
+            // Visual: Remover active de los otros de la misma tarjeta
+            document.querySelectorAll(`.nd-price-box[data-sanguche-id="${burgerId}"]`).forEach(b => b.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // --- Manejo del Click en Agregar al Carrito ---
+        function handleAddToCartClick(productId) {
+            console.log('Agregando al carrito ID:', productId);
+            const product = hamburguesas.find(p => p.id === productId);
+            if (!product) {
+                console.error('Producto no encontrado:', productId);
+                return;
+            }
+
+            const variantIndex = window.selectedBurgerVariants[productId] || 0;
+            const variant = product.variants[variantIndex];
+
+            const veggieCheck = document.getElementById(`veggie-check-${productId}`);
+            const isVeggie = veggieCheck ? veggieCheck.checked : false;
+
+            console.log('Variante seleccionada:', variant.type, 'Veggie:', isVeggie);
+
+            if (product && variant && typeof cart !== 'undefined') {
+                cart.addToCart(product, variant, isVeggie);
+
+                // Feedback visual en el botón
+                const btn = document.getElementById(`add-btn-${productId}`);
+                btn.innerHTML = '¡AGREGADO!';
+
+                setTimeout(() => {
+                    btn.innerHTML = 'AGREGAR AL PEDIDO';
+                }, 1000); // 1 segundo exacto
+            } else {
+                console.error('Error: cart no definido o datos insuficientes');
+            }
         }
 
         // --- Manejar click en variante ---
@@ -2582,16 +2703,19 @@
             }
         });
 
-        // Manejo del Toggle Veggie
+        // --- Manejo del Toggle Veggie ---
         function handleVeggieToggle(productId) {
+            console.log('Veggie toggle ID:', productId);
             const checkbox = document.getElementById(`veggie-check-${productId}`);
             const btn = document.getElementById(`add-btn-${productId}`);
             const container = checkbox.closest('.veggie-toggle-container');
 
-            if (checkbox.checked) {
+            if (checkbox && checkbox.checked) {
+                console.log('Veggie activado');
                 btn.classList.add('veggie-active');
                 container.classList.add('active');
-            } else {
+            } else if (checkbox) {
+                console.log('Veggie desactivado');
                 btn.classList.remove('veggie-active');
                 container.classList.remove('active');
             }
