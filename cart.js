@@ -14,7 +14,7 @@ class CartManager {
     }
 
     // Agregar al carrito (SIEMPRE como item individual)
-    addToCart(product, variant) {
+    addToCart(product, variant, isVeggie = false) {
         const uniqueId = this.nextId++;
         const key = `item-${uniqueId}`;
 
@@ -28,6 +28,7 @@ class CartManager {
             variantType: variant.type,
             price: variant.price,
             quantity: 1, // Siempre 1 por item individual
+            isVeggie: isVeggie,
             comments: '', // Comentarios personalizados
             extras: {
                 bacon: 0,
@@ -244,7 +245,7 @@ function renderCart() {
             <div class="cart-item-details">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2);">
                     <div style="flex: 1;">
-                        <div class="cart-item-name">${item.productName}</div>
+                        <div class="cart-item-name">${item.productName} ${item.isVeggie ? '<span style="color: #28a745; font-size: 0.75rem; margin-horizontal: 5px; vertical-align: middle;">[VEGGIE 🌱]</span>' : ''}</div>
                         <div class="cart-item-variant">${item.variantType}</div>
                         <div class="cart-item-price">$${formatPrice(itemTotal)}</div>
                     </div>

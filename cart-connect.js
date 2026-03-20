@@ -52,8 +52,12 @@ function connectCartButtons() {
             }
 
             if (product && variant) {
+                // Verificar si es versión VEGGIE
+                const veggieCheck = document.getElementById(`veggie-check-${productId}`);
+                const isVeggie = veggieCheck ? veggieCheck.checked : false;
+
                 // Agregar al carrito
-                cart.addToCart(product, variant);
+                cart.addToCart(product, variant, isVeggie);
 
                 // Feedback visual
                 const originalHtml = btn.innerHTML;
