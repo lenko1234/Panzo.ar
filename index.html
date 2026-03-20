@@ -440,7 +440,7 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
-            transform: scale(1.3) translateY(0);
+            transform: scale(1) translateY(0);
             /* Eliminado el desplazamiento hacia abajo */
             transition: transform 0.3s ease;
         }
@@ -2194,12 +2194,14 @@
                         // Diseño ORIGINAL para el resto de las burgers destacadas
                         featured.innerHTML = `
                             <div class="featured-media-container">
-                                <video id="video-primary-${hamburguesa.id}" autoplay muted playsinline loop style="width: 100%; height: 100%; object-fit: cover;">
-                                    <source src="${hamburguesa.video}" type="video/mp4">
-                                </video>
-                                <video id="video-secondary-${hamburguesa.id}" muted playsinline loop style="width: 100%; height: 100%; object-fit: cover; opacity: 0; position: absolute; top:0; left:0;">
-                                    <source src="${hamburguesa.video}" type="video/mp4">
-                                </video>
+                                <div class="video-loop-container">
+                                    <video autoplay muted playsinline class="cf-active" style="object-fit: contain; transform: scale(1) !important;">
+                                        <source src="${hamburguesa.video}" type="video/mp4">
+                                    </video>
+                                    <video muted playsinline class="cf-inactive" style="object-fit: contain; transform: scale(1) !important;">
+                                        <source src="${hamburguesa.video}" type="video/mp4">
+                                    </video>
+                                </div>
                             </div>
                             
                             <div class="featured-content">
