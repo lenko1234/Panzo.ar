@@ -17,9 +17,12 @@ function createWhatsAppMessage() {
     items.forEach((item, index) => {
         message += `${index + 1}. ${item.productName}`;
 
-        // Solo agregar variante si no es "Unidad" (bebidas)
         if (item.variantType !== 'Unidad') {
             message += ` - ${item.variantType}`;
+        }
+
+        if (item.isVeggie) {
+            message += ' [🌱 VEGGIE]';
         }
 
         message += '\n';

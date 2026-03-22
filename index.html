@@ -383,7 +383,7 @@
         .marquee-container {
             width: 100%;
             overflow: hidden;
-            position: relative;
+            position: relative; 
             margin-block: 10px;
         }
 
@@ -1761,9 +1761,6 @@
             width: 100%;
             background-color: transparent;
             padding: 10px 0;
-            margin-top: 0;
-            display: flex;
-            justify-content: center;
             overflow: hidden;
         }
 
@@ -1780,16 +1777,16 @@
         .nd-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            max-width: 1100px;
+            gap: 40px;
             width: 100%;
-            margin: 0 auto;
-            padding: 0 15px;
+            margin: 0; /* Ya está centrado por el contenedor padre */
+            padding: 0;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 800px) {
             .nd-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
         }
 
@@ -1978,50 +1975,7 @@
         </div>
     </header>
 
-    <main>
-        <!-- HERO -->
-        <section class="hero has-mantel">
-            <div class="container hero-grid">
-                <div class="hero-content">
-                    <h1 class="hero-title fade-in-up">
-                        COMIDA<br>
-                        <span>REAL.</span>
-                    </h1>
-                    <p class="hero-subtitle fade-in-up" style="transition-delay: 100ms">
-                        El proyecto gastronomico de un chico de 20 años.
-                    </p>
-                    <div class="fade-in-up" style="transition-delay: 200ms">
-                        <a href="#menu" class="btn btn-primary">VER EL MENÚ</a>
-                    </div>
-                </div>
-
-                <!-- Video Destacado (Estilo Polaroid) -->
-                <div class="hero-video-wrapper fade-in-up" style="transition-delay: 300ms">
-                    <div class="video-frame">
-                        <video autoplay muted loop playsinline class="hero-video">
-                            <source src="assets/BURGES_PANZO_OPT.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- MARQUEE (CINTA) -->
-        <div class="marquee-container has-mantel">
-            <div class="marquee">
-                <div class="marquee-inner">
-                    <span>• HECHO A MANO •</span>
-                    <span>HAMBURGUESAS DE VERDAD</span>
-                    <span>• PANZAS FELICES •</span>
-                    <span>MUCHO QUESO</span>
-                    <span>• HECHO A MANO •</span>
-                    <span>HAMBURGUESAS DE VERDAD</span>
-                    <span>• PANZAS FELICES •</span>
-                    <span>MUCHO QUESO</span>
-                </div>
-            </div>
-        </div>
-
+    <main style="margin-top: 80px;"> <!-- Redimensionado para que coincida con el header -->
         <!-- GRID DE PRODUCTOS -->
         <section id="menu" class="feed-section" style="padding-bottom: 0;">
             <div class="container">
@@ -2032,7 +1986,7 @@
                 </div>
             </div>
 
-            <div class="new-design-container has-mantel">
+            <div class="container has-mantel"> <!-- Usamos el mismo container para alinear perfecto con el título -->
                 <div class="nd-grid" id="hamburguesas-grid">
                     <!-- Las tarjetas se generarán dinámicamente con JavaScript -->
                 </div>
