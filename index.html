@@ -72,7 +72,7 @@
             <!-- Borde Checkerboard Inferior NO es necesario con el fondo parallax -->
             <!-- <div class="checkerboard" style="margin-top: 40px;"></div> -->
             <!-- Aviso si no hay hamburguesas cargadas -->
-            <div id="hamburguesas-placeholder" style="text-align: center; padding: var(--space-10) var(--space-6);">
+            <div id="hamburguesas-placeholder" style="display: none; text-align: center; padding: var(--space-10) var(--space-6);">
                 <p style="opacity: 0.5; font-style: italic;">Nuevas burguers en camino...</p>
             </div>
 
@@ -170,7 +170,7 @@
                 <i class="ph-bold ph-trash"></i> VACIAR CARRITO
             </button>
             <button class="cart-checkout-btn" id="whatsapp-btn">
-                <i class="ph-bold ph-whatsapp-logo"></i> PEDIR POR WHATSAPP
+                <i class="ph-bold ph-whatsapp-logo"></i> FINALIZAR PEDIDO
             </button>
         </div>
     </div>
@@ -402,11 +402,11 @@
 
                 card.innerHTML = `
                     <div class="nd-card-header">
-                        <img src="${hamburguesa.logo || 'assets/logo-panzo.webp'}" alt="Panzo" class="nd-card-logo" loading="lazy" decoding="async">
+                        <img src="${hamburguesa.logo || 'assets/logo-panzo.webp'}" alt="Panzo" class="nd-card-logo" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
                     </div>
                     <div class="nd-card-inner">
                         <h2 class="nd-card-title">${hamburguesa.name}</h2>
-                        <img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="nd-card-image" loading="lazy" decoding="async">
+                        <img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="nd-card-image" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
                         <p class="nd-card-ingredients">${readableIngredients}</p>
                     </div>
                     <div class="nd-card-footer">

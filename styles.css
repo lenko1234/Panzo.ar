@@ -1783,6 +1783,12 @@
         .nd-card-logo {
             height: 75px;
             object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .nd-card-logo.loaded {
+            opacity: 1;
         }
 
         .nd-card-inner {
@@ -1832,6 +1838,12 @@
             z-index: 1;
             pointer-events: none;
             /* Crucial: para que no tape los clicks */
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .nd-card-image.loaded {
+            opacity: 1;
         }
 
         .nd-card-ingredients {
