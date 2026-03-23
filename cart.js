@@ -42,6 +42,10 @@ class CartManager {
 
         this.saveCart();
         this.notifyListeners();
+
+        // Animar el botón del carrito
+        animateCartButton();
+
         return true;
     }
 
@@ -399,6 +403,30 @@ function toggleCart() {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
     }
+}
+
+// Animar el botón del carrito cuando se agrega algo
+function animateCartButton() {
+    const stickyIcon = document.querySelector('.sticky-cart-icon');
+    const stickyItems = document.querySelector('.sticky-cart-items');
+
+    if (!stickyIcon || !stickyItems) return;
+
+    // Animar el ícono rojo (resplandor blanco interno)
+    stickyIcon.classList.remove('glow-animation');
+    void stickyIcon.offsetWidth; // Force reflow para reiniciar la animación
+    stickyIcon.classList.add('glow-animation');
+
+    // Animar el texto del número de items
+    stickyItems.classList.remove('grow-animation');
+    void stickyItems.offsetWidth; // Force reflow
+    stickyItems.classList.add('grow-animation');
+
+    // Remover las clases después de que termine la animación
+    setTimeout(() => {
+        stickyIcon.classList.remove('glow-animation');
+        stickyItems.classList.remove('grow-animation');
+    }, 500);
 }
 
 // Suscribirse a cambios del carrito
