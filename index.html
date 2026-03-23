@@ -315,6 +315,16 @@
                     { type: "Triple", price: 17999 }
                 ]
             },
+            {
+                id: 109,
+                name: "PAPAS FRITAS",
+                ingredients: "",
+                image: "assets/new design/papasfritas.webp",
+                logo: "assets/logo-panzo.webp",
+                variants: [
+                    { type: "Porción", price: 4999 }
+                ]
+            },
         ];
 
         const sanguches = [];
@@ -413,6 +423,7 @@
                     </div>
 
                     <!-- OPCIÓN VEGGIE -->
+                    ${hamburguesa.id !== 109 ? `
                     <div class="nd-veggie-pills">
                         <label class="veggie-toggle-container" style="transform: scale(0.9);">
                             <span class="veggie-label">OPCIÓN VEGGIE</span>
@@ -420,6 +431,7 @@
                             <div class="veggie-switch"></div>
                         </label>
                     </div>
+                    ` : ''}
 
                     <button id="add-btn-${hamburguesa.id}" class="nd-order-btn" data-product-id="${hamburguesa.id}" onclick="handleAddToCartClick(${hamburguesa.id})">
                         AGREGAR AL PEDIDO
