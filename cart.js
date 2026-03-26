@@ -36,7 +36,8 @@ class CartManager {
                 papas: 0,
                 cebolla: 0,
                 cebollaCaramelizada: 0,
-                salsa: 0
+                salsa: 0,
+                pepinillos: 0
             }
         };
 
@@ -92,7 +93,8 @@ class CartManager {
             ((item.extras.papas || 0) * 2000) +
             ((item.extras.cebolla || 0) * 100) +
             ((item.extras.cebollaCaramelizada || 0) * 200) +
-            ((item.extras.salsa || 0) * 300);
+            ((item.extras.salsa || 0) * 300) +
+            ((item.extras.pepinillos || 0) * 700);
 
         return item.price + extrasTotal;
     }
@@ -310,7 +312,8 @@ function renderExtrasPanel(item) {
         { name: 'papas', label: 'Papas fritas', price: 2000 },
         { name: 'cebolla', label: 'Cebolla', price: 100 },
         { name: 'cebollaCaramelizada', label: 'Cebolla caramelizada', price: 200 },
-        { name: 'salsa', label: getSalsaLabel(item.productId), price: 300 }
+        { name: 'salsa', label: getSalsaLabel(item.productId), price: 300 },
+        { name: 'pepinillos', label: 'Pepinillos', price: 700 }
     ];
 
     return extras.map(extra => {

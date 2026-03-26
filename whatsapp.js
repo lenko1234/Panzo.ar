@@ -34,7 +34,8 @@ function createWhatsAppMessage() {
             papas: 'Papas fritas',
             cebolla: 'Cebolla',
             cebollaCaramelizada: 'Cebolla caramelizada',
-            salsa: getSalsaLabel(item.productId)
+            salsa: getSalsaLabel(item.productId),
+            pepinillos: 'Pepinillos'
         };
 
         let hasExtras = false;
