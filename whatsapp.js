@@ -22,7 +22,7 @@ function createWhatsAppMessage() {
         }
 
         if (item.isVeggie) {
-            message += ' [🌱 VEGGIE]';
+            message += ' [VEGGIE]';
         }
 
         message += '\n';
@@ -52,7 +52,7 @@ function createWhatsAppMessage() {
 
         // Agregar comentarios si tiene
         if (item.comments && item.comments.trim() !== '') {
-            message += `   💬 ${item.comments.trim()}\n`;
+            message += `   Nota: ${item.comments.trim()}\n`;
         }
 
         message += '\n';
@@ -60,7 +60,7 @@ function createWhatsAppMessage() {
 
     // Agregar total del pedido
     const total = cart.getTotal();
-    message += `💰 Total: $${formatPrice(total)}\n\n`;
+    message += `Total: $${formatPrice(total)}\n\n`;
 
     // Agregar alias
     message += 'Alias: Alehartvig\n\n';

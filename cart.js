@@ -251,7 +251,7 @@ function renderCart() {
             <div class="cart-item-details">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-2);">
                     <div style="flex: 1;">
-                        <div class="cart-item-name">${item.productName} ${item.isVeggie ? '<span style="color: #28a745; font-size: 0.75rem; margin-horizontal: 5px; vertical-align: middle;">[VEGGIE 🌱]</span>' : ''}</div>
+                        <div class="cart-item-name">${item.productName} ${item.isVeggie ? '<span style="color: #28a745; font-size: 0.75rem; margin-horizontal: 5px; vertical-align: middle;">[VEGGIE]</span>' : ''}</div>
                         <div class="cart-item-variant">${item.variantType}</div>
                         <div class="cart-item-price">$${formatPrice(itemTotal)}</div>
                     </div>
