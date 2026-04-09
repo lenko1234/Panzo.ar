@@ -55,8 +55,8 @@ const newHamburguesas = `// --- DATA: Hamburguesas (ACTIVO) ---
                 icon: "ph-fill ph-hamburger",
                 image: "assets/new design/PANZO (1).png",
                 variants: [
-                    { type: "Simple", price: 9999 },
-                    { type: "Doble", price: 13999 }
+                    { type: "Simple", price: 10999 },
+                    { type: "Doble", price: 14499 }
                 ]
             },
             {
@@ -66,8 +66,8 @@ const newHamburguesas = `// --- DATA: Hamburguesas (ACTIVO) ---
                 icon: "ph-fill ph-hamburger",
                 image: "assets/new design/PANZO (3).png",
                 variants: [
-                    { type: "Simple", price: 10499 },
-                    { type: "Doble", price: 13999 }
+                    { type: "Simple", price: 11199 },
+                    { type: "Doble", price: 14499 }
                 ]
             },
             {
@@ -77,8 +77,8 @@ const newHamburguesas = `// --- DATA: Hamburguesas (ACTIVO) ---
                 icon: "ph-fill ph-hamburger",
                 image: "assets/new design/PANZO (6).png",
                 variants: [
-                    { type: "Doble", price: 13999 },
-                    { type: "Triple", price: 17999 }
+                    { type: "Doble", price: 14799 },
+                    { type: "Triple", price: 18799 }
                 ]
             },
         ];`;
