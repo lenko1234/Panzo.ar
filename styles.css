@@ -1827,6 +1827,13 @@
                 0 4px 0 var(--nd-bg);
         }
 
+        .nd-card-title.long-title {
+            font-size: clamp(1.4rem, 4.8vw, 2.6rem);
+            white-space: normal;
+            line-height: 0.95;
+            top: -0.1em;
+        }
+
         .nd-card-image {
             position: absolute;
             top: 50%;

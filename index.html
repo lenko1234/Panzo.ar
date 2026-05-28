@@ -260,12 +260,12 @@
         const hamburguesas = [
             {
                 id: 108,
-                name: "COMBO CLÁSICA",
-                ingredients: "1 CLÁSICA + 1 PAPAS FRITAS SAZONADAS + 1 GASEOSA DE VIDRIO A ELECCIÓN.",
+                name: "DIA DE LA HAMBURGUESA",
+                ingredients: "1 HAMBURGUESA CLÁSICA DOBLE + PAPAS SAZONADAS + LATA DE GASEOSA",
                 image: "assets/new design/clasica.webp",
                 logo: "assets/logo-panzo.webp",
                 variants: [
-                    { type: "PROMO", price: 13499 }
+                    { type: "PROMO", price: 14000 }
                 ]
             },
             {
@@ -402,7 +402,7 @@
                         <img src="${hamburguesa.logo || 'assets/logo-panzo.webp'}" alt="Panzo" class="nd-card-logo" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
                     </div>
                     <div class="nd-card-inner">
-                        <h2 class="nd-card-title">${hamburguesa.name}</h2>
+                        <h2 class="nd-card-title${hamburguesa.name.length > 15 ? ' long-title' : ''}">${hamburguesa.name}</h2>
                         <img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="nd-card-image" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
                         <p class="nd-card-ingredients">${readableIngredients}</p>
                     </div>
