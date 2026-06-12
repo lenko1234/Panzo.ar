@@ -345,6 +345,7 @@ function getSalsaLabel(productId) {
         102: 'Salsa Panzo',     // La Traición 2.0
         103: 'Mayonesa',        // La Clásica
         104: 'Kétchup/Mostaza', // Cuarto de Libra
+        111: 'Chimichurri',     // Argentum
         201: 'Mayo Barbacoa'    // Bondiola
     };
     return salsas[productId] || 'Salsa';
