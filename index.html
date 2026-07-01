@@ -197,7 +197,6 @@
     <script src="cart.js"></script>
     <script src="cart-connect.js"></script>
     <script src="whatsapp.js"></script>
-
     <script>
         // --- DATA: Focaccias (BACKUP - Para usar cuando vuelvan) ---
         const focacciasBackup = [
@@ -256,8 +255,8 @@
             }
         ];
 
-        // --- DATA: Hamburguesas (ACTIVO) ---
-        const hamburguesas = [
+        // --- DATA BACKUP (Si falla Sanity) ---
+        const hamburguesasBackup = [
             {
                 id: 111,
                 name: "ARGENTUM",
@@ -335,10 +334,7 @@
             },
         ];
 
-        const sanguches = [];
-
-        // --- DATA: Encargues (solo por pedido previo para el día siguiente) ---
-        const encargues = [
+        const encarguesBackup = [
             {
                 id: 201,
                 name: "LA BONDIOLA",
@@ -349,8 +345,7 @@
             }
         ];
 
-        // --- DATA: Bebidas ---
-        const bebidas = [
+        const bebidasBackup = [
             {
                 id: 5,
                 name: "COCA COLA DE VIDRIO",
@@ -376,6 +371,72 @@
                 icon: "ph-fill ph-package"
             }
         ];
+
+        // Variables activas
+        let hamburguesas = [];
+        let bebidas = [];
+        let encargues = [];
+        const sanguches = [];
+
+        // --- FETCH DYNAMIC MENU FROM SANITY.IO ---
+        async function fetchMenuFromSanity() {
+            const PROJECT_ID = 'zq23sglj';
+            const DATASET = 'production';
+            const QUERY = encodeURIComponent(`{
+                "hamburguesas": *[_type == "burger"] | order(order asc) {
+                    id,
+                    name,
+                    ingredients,
+                    "image": image.asset->url,
+                    variants[] {
+                        type,
+                        price
+                    }
+                },
+                "bebidas": *[_type == "bebida"] | order(order asc) {
+                    id,
+                    name,
+                    description,
+                    "image": image.asset->url,
+                    price,
+                    icon
+                },
+                "encargues": *[_type == "encargue"] | order(order asc) {
+                    id,
+                    name,
+                    subtitle,
+                    ingredients,
+                    "video": video.asset->url,
+                    whatsappMsg
+                }
+            }`);
+            const url = `https://${PROJECT_ID}.apicdn.sanity.io/v2021-10-21/data/query/${DATASET}?query=${QUERY}`;
+
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+
+                if (result.result) {
+                    hamburguesas = result.result.hamburguesas && result.result.hamburguesas.length > 0
+                        ? result.result.hamburguesas
+                        : hamburguesasBackup;
+                    bebidas = result.result.bebidas && result.result.bebidas.length > 0
+                        ? result.result.bebidas
+                        : bebidasBackup;
+                    encargues = result.result.encargues && result.result.encargues.length > 0
+                        ? result.result.encargues
+                        : encarguesBackup;
+                    console.log("Menú cargado desde Sanity exitosamente.");
+                } else {
+                    throw new Error("No se devolvieron resultados");
+                }
+            } catch (error) {
+                console.error("Error al conectar con Sanity. Usando base de datos local de respaldo:", error);
+                hamburguesas = hamburguesasBackup;
+                bebidas = bebidasBackup;
+                encargues = encarguesBackup;
+            }
+        }
 
         // --- Función para formatear precio (Movida arriba para disponibilidad global) ---
         function formatPrice(price) {
@@ -667,11 +728,28 @@
         }
 
         // --- Inicializar ---
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Mostrar estado de carga inicial en los grids
+            const hGrid = document.getElementById('hamburguesas-grid');
+            const bGrid = document.getElementById('bebidas-grid');
+            if (hGrid) hGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: var(--space-10) var(--space-6); color: var(--color-brand); font-family: \'Space Grotesk\', sans-serif;"><i class="ph-bold ph-spinner loading-spinner" style="font-size: 2rem; margin-bottom: var(--space-2);"></i><p style="font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Encendiendo las brasas...</p></div>';
+            if (bGrid) bGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: var(--space-10) var(--space-6); color: var(--color-dark); font-family: \'Space Grotesk\', sans-serif;"><p style="font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Enfriando las bebidas...</p></div>';
+
+            // Cargar menú desde Sanity
+            await fetchMenuFromSanity();
+
+            // Limpiar grids e inicializar renders
+            if (hGrid) hGrid.innerHTML = '';
+            if (bGrid) bGrid.innerHTML = '';
+            
+            // Eliminar encargues renderizados anteriormente para evitar duplicados
+            document.querySelectorAll('.encargue-item').forEach(el => el.remove());
+
             renderHamburguesas();
             renderSanguches();
             renderEncargues();
             renderBebidas();
+
             console.log('Productos renderizados:', document.querySelectorAll('.post-card').length);
             connectCartButtons();
 

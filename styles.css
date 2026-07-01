@@ -1967,3 +1967,14 @@
         .sticky-cart-items.grow-animation {
             animation: text-grow 0.4s ease-in-out;
         }
+
+        /* === ANIMACIONES DE CARGA (SANITY) === */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+        }
+
