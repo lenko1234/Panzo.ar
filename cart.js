@@ -411,6 +411,19 @@ function toggleCart() {
 
 // Animar el botón del carrito cuando se agrega algo
 function animateCartButton() {
+    // Animar el botón de la cabecera (Desktop / General)
+    const cartToggle = document.getElementById('cart-toggle');
+    if (cartToggle) {
+        cartToggle.classList.remove('cart-pop');
+        void cartToggle.offsetWidth; // Force reflow
+        cartToggle.classList.add('cart-pop');
+        
+        setTimeout(() => {
+            cartToggle.classList.remove('cart-pop');
+        }, 300);
+    }
+
+    // Animar la barra flotante de abajo (Mobile)
     const stickyIcon = document.querySelector('.sticky-cart-icon');
     const stickyItems = document.querySelector('.sticky-cart-items');
 

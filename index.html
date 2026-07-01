@@ -522,52 +522,6 @@
             document.querySelectorAll(`.nd-price-box[data-sanguche-id="${burgerId}"]`).forEach(b => b.classList.remove('active'));
             element.classList.add('active');
         }
-        // --- Animación Volar al Carrito (Premium) ---
-        function flyToCart(imageElement) {
-            const cartToggle = document.getElementById('cart-toggle');
-            if (!cartToggle || !imageElement) return;
-
-            const startRect = imageElement.getBoundingClientRect();
-            const targetRect = cartToggle.getBoundingClientRect();
-
-            // Clonar la imagen
-            const flyer = imageElement.cloneNode();
-            flyer.style.position = 'fixed';
-            flyer.style.left = `${startRect.left}px`;
-            flyer.style.top = `${startRect.top}px`;
-            flyer.style.width = `${startRect.width}px`;
-            flyer.style.height = `${startRect.height}px`;
-            flyer.style.zIndex = '99999';
-            flyer.style.pointerEvents = 'none';
-            flyer.style.borderRadius = '50%';
-            flyer.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
-            flyer.style.transition = 'all 0.8s cubic-bezier(0.25, 1, 0.5, 1)';
-            flyer.style.transform = 'scale(1) rotate(0deg)';
-            flyer.style.opacity = '1';
-
-            document.body.appendChild(flyer);
-
-            // Forzar reflow
-            void flyer.offsetWidth;
-
-            // Calcular destino (centro del botón del carrito)
-            const destX = targetRect.left + (targetRect.width / 2) - (startRect.left + (startRect.width / 2));
-            const destY = targetRect.top + (targetRect.height / 2) - (startRect.top + (startRect.height / 2));
-
-            // Aplicar transformación (se achica a scale(0) y desaparece a opacity(0))
-            flyer.style.transform = `translate(${destX}px, ${destY}px) scale(0) rotate(360deg)`;
-            flyer.style.opacity = '0';
-
-            // Limpieza al terminar
-            setTimeout(() => {
-                flyer.remove();
-                // Efecto de pop en el botón del carrito
-                cartToggle.classList.remove('cart-pop');
-                void cartToggle.offsetWidth; // force reflow
-                cartToggle.classList.add('cart-pop');
-            }, 800);
-        }
-        window.flyToCart = flyToCart;
 
         // --- Manejo del Click en Agregar al Carrito ---
         function handleAddToCartClick(productId) {
@@ -587,19 +541,11 @@
             console.log('Variante seleccionada:', variant.type, 'Veggie:', isVeggie);
 
             if (product && variant && typeof cart !== 'undefined') {
-                // Volar la hamburguesa al carrito
-                const btn = document.getElementById(`add-btn-${productId}`);
-                const card = btn ? btn.closest('.nd-card') : null;
-                const img = card ? card.querySelector('.nd-card-image') : null;
-                if (img) {
-                    flyToCart(img);
-                }
-
                 cart.addToCart(product, variant, isVeggie);
 
                 // Feedback visual en el botón
-                const btnElement = document.getElementById(`add-btn-${productId}`);
-                btnElement.innerHTML = '¡AGREGADO!';
+                const btn = document.getElementById(`add-btn-${productId}`);
+                btn.innerHTML = '¡AGREGADO!';
 
                 setTimeout(() => {
                     btn.innerHTML = 'AGREGAR AL PEDIDO';
