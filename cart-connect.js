@@ -52,6 +52,13 @@ function connectCartButtons() {
             }
 
             if (product && variant) {
+                // Volar imagen al carrito
+                const card = btn.closest('.post-card');
+                const img = card ? card.querySelector('.post-img') : null;
+                if (img && typeof window.flyToCart === 'function') {
+                    window.flyToCart(img);
+                }
+
                 // Verificar si es versión VEGGIE
                 const veggieCheck = document.getElementById(`veggie-check-${productId}`);
                 const isVeggie = veggieCheck ? veggieCheck.checked : false;
