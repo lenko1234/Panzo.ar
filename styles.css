@@ -698,7 +698,12 @@
         }
 
         .post-img {
-            transition: transform 0.5s ease;
+            opacity: 0;
+            transition: opacity 0.4s ease-out, transform 0.5s ease;
+        }
+
+        .post-img.loaded {
+            opacity: 1;
         }
 
         .post-card:hover .post-img {
@@ -1784,7 +1789,7 @@
             height: 75px;
             object-fit: contain;
             opacity: 0;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.3s ease-out;
         }
 
         .nd-card-logo.loaded {
@@ -1839,7 +1844,7 @@
             pointer-events: none;
             /* Crucial: para que no tape los clicks */
             opacity: 0;
-            transition: opacity 2s ease;
+            transition: opacity 0.4s ease-out;
         }
 
         .nd-card-image.loaded {
