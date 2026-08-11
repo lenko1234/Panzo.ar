@@ -1851,6 +1851,10 @@
             opacity: 1;
         }
 
+        .nd-card-image.img-papas {
+            transform: translate(-50%, -65%) scale(2.5);
+        }
+
         .nd-card-ingredients {
             font-family: 'Extenda Peta', sans-serif;
             color: var(--nd-card-bg);

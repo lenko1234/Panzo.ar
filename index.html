@@ -471,7 +471,7 @@
                     </div>
                     <div class="nd-card-inner">
                         <h2 class="nd-card-title">${hamburguesa.name}</h2>
-                        <img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="nd-card-image" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+                        <img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="nd-card-image ${hamburguesa.id === 109 || (hamburguesa.name && hamburguesa.name.toUpperCase().includes('PAPAS')) ? 'img-papas' : ''}" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
                         <p class="nd-card-ingredients">${readableIngredients}</p>
                     </div>
                     <div class="nd-card-footer">
