@@ -1744,7 +1744,7 @@
 
         .nd-title {
             font-family: 'Extenda Peta', sans-serif;
-            font-size: clamp(5rem, 18.5vw, 12.5rem); 
+            font-size: clamp(3.5rem, 13vw, 10rem); 
             color: var(--nd-card-bg);
             text-align: center;
             margin: 0; /* Sin márgenes para centrar bien */
