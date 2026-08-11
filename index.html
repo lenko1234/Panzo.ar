@@ -88,10 +88,8 @@
         </section>
 
         <!-- SECCIÓN ENCARGUES -->
-        <section id="encargues-section" class="feed-section" style="padding-top: var(--space-12);">
+        <section id="encargues-section" class="feed-section" style="padding-top: var(--space-12); display: none;">
             <div class="container">
-
-
                 <div id="encargues-grid">
                     <!-- Los encargues se generarán dinámicamente con JavaScript -->
                 </div>
@@ -100,7 +98,7 @@
 
         <!-- SECCIÓN DE BEBIDAS -->
         <section id="bebidas-section" class="feed-section container has-mantel"
-            style="padding-top: var(--space-12); border-radius: var(--radius-lg);">
+            style="padding-top: var(--space-12); border-radius: var(--radius-lg); display: none;">
             <div class="section-header">
                 <h2 class="fade-in-up" style="color: var(--color-dark); text-shadow: 2px 2px 0 white;">BEBIDAS</h2>
                 <p class="fade-in-up" style="font-weight: 700; font-size: 1.2rem; color: var(--color-dark);">Para
@@ -414,27 +412,25 @@
 
             try {
                 const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
                 const result = await response.json();
 
                 if (result.result) {
-                    hamburguesas = result.result.hamburguesas && result.result.hamburguesas.length > 0
-                        ? result.result.hamburguesas
-                        : hamburguesasBackup;
-                    bebidas = result.result.bebidas && result.result.bebidas.length > 0
-                        ? result.result.bebidas
-                        : bebidasBackup;
-                    encargues = result.result.encargues && result.result.encargues.length > 0
-                        ? result.result.encargues
-                        : encarguesBackup;
-                    console.log("Menú cargado desde Sanity exitosamente.");
+                    // Usamos los datos de Sanity tal cual — aunque estén vacíos.
+                    // El backup solo se activa si Sanity no responde (catch).
+                    hamburguesas = result.result.hamburguesas ?? hamburguesasBackup;
+                    bebidas     = result.result.bebidas     ?? bebidasBackup;
+                    encargues   = result.result.encargues   ?? encarguesBackup;
+                    console.log(`Menú cargado desde Sanity: ${hamburguesas.length} burgers, ${bebidas.length} bebidas, ${encargues.length} encargues.`);
                 } else {
                     throw new Error("No se devolvieron resultados");
                 }
             } catch (error) {
+                // Solo llega acá si hubo error de red o Sanity está caído
                 console.error("Error al conectar con Sanity. Usando base de datos local de respaldo:", error);
                 hamburguesas = hamburguesasBackup;
-                bebidas = bebidasBackup;
-                encargues = encarguesBackup;
+                bebidas      = bebidasBackup;
+                encargues    = encarguesBackup;
             }
         }
 
@@ -508,6 +504,16 @@
                 `;
 
                 grid.appendChild(card);
+
+                // Forzar clase loaded si la imagen ya está en cache
+                const img = card.querySelector('.nd-card-image');
+                if (img && img.complete) {
+                    img.classList.add('loaded');
+                }
+                const logo = card.querySelector('.nd-card-logo');
+                if (logo && logo.complete) {
+                    logo.classList.add('loaded');
+                }
             });
             console.log('Render de hamburguesas finalizado.');
         }
@@ -583,6 +589,15 @@
         function renderBebidas() {
             const grid = document.getElementById('bebidas-grid');
 
+            if (bebidas.length === 0) {
+                // No hay bebidas en Sanity — la sección queda oculta
+                return;
+            }
+
+            // Mostrar la sección solo si hay bebidas
+            const section = document.getElementById('bebidas-section');
+            if (section) section.style.display = '';
+
             bebidas.forEach((bebida, index) => {
                 const card = document.createElement('article');
                 card.className = 'post-card'; // Sin fade-in-up para asegurar visibilidad
@@ -595,7 +610,7 @@
                     </div>
                     <div class="post-img-container">
                         ${bebida.badge ? `<div class="badge-new">${bebida.badge}</div>` : ''}
-                        <img src="${bebida.image}" alt="${bebida.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async">
+                        <img src="${bebida.image}" alt="${bebida.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
                     </div>
                     <div class="post-footer">
                         <div class="post-actions">
@@ -618,6 +633,12 @@
                     `;
 
                 grid.appendChild(card);
+
+                // Forzar clase loaded si la imagen ya está en cache
+                const img = card.querySelector('.post-img');
+                if (img && img.complete) {
+                    img.classList.add('loaded');
+                }
             });
         }
 
@@ -628,6 +649,15 @@
         function renderEncargues() {
             const container = document.getElementById('encargues-grid');
             const WHATSAPP_NUMBER = '5492216817239';
+
+            if (encargues.length === 0) {
+                // No hay encargues en Sanity — la sección queda oculta
+                return;
+            }
+
+            // Mostrar la sección solo si hay encargues
+            const encarguesSection = document.getElementById('encargues-section');
+            if (encarguesSection) encarguesSection.style.display = '';
 
             encargues.forEach((item, index) => {
                 const section = document.createElement('div');
@@ -644,10 +674,10 @@
                 section.innerHTML = `
                     <div class="featured-media-container">
                         <div class="video-loop-container">
-                            <video autoplay muted playsinline class="cf-active" preload="none">
+                            <video autoplay muted playsinline class="cf-active" preload="auto">
                                 <source src="${item.video}" type="video/mp4">
                             </video>
-                            <video muted playsinline class="cf-inactive" preload="none">
+                            <video muted playsinline class="cf-inactive" preload="auto">
                                 <source src="${item.video}" type="video/mp4">
                             </video>
                         </div>
@@ -684,8 +714,18 @@
                 let swapping = false;
 
                 // Estado inicial vía inline styles
-                va.style.cssText += ';position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:2;opacity:1;';
+                va.style.cssText += ';position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:2;opacity:0;transition:opacity 0.5s ease;';
                 vb.style.cssText += ';position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:1;opacity:0;';
+
+                // Mostrar el primer video suavemente una vez que esté listo para reproducirse
+                const startPlaying = () => {
+                    va.style.opacity = '1';
+                };
+                if (va.readyState >= 3) {
+                    startPlaying();
+                } else {
+                    va.addEventListener('canplay', startPlaying, { once: true });
+                }
 
                 function swap() {
                     if (swapping) return;
@@ -729,11 +769,11 @@
 
         // --- Inicializar ---
         document.addEventListener('DOMContentLoaded', async () => {
-            // Mostrar estado de carga inicial en los grids
+            // Mostrar estado de carga inicial en los grids (solo spinner, sin textos de carga)
             const hGrid = document.getElementById('hamburguesas-grid');
             const bGrid = document.getElementById('bebidas-grid');
-            if (hGrid) hGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: var(--space-10) var(--space-6); color: var(--color-brand); font-family: \'Space Grotesk\', sans-serif;"><i class="ph-bold ph-spinner loading-spinner" style="font-size: 2rem; margin-bottom: var(--space-2);"></i><p style="font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Encendiendo las brasas...</p></div>';
-            if (bGrid) bGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: var(--space-10) var(--space-6); color: var(--color-dark); font-family: \'Space Grotesk\', sans-serif;"><p style="font-weight: 700; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em;">Enfriando las bebidas...</p></div>';
+            if (hGrid) hGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: var(--space-10) var(--space-6); color: var(--color-brand);"><i class="ph-bold ph-spinner loading-spinner" style="font-size: 2rem;"></i></div>';
+            if (bGrid) bGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: var(--space-10) var(--space-6); color: var(--color-dark);"><i class="ph-bold ph-spinner loading-spinner" style="font-size: 2rem;"></i></div>';
 
             // Cargar menú desde Sanity
             await fetchMenuFromSanity();
@@ -753,20 +793,22 @@
             console.log('Productos renderizados:', document.querySelectorAll('.post-card').length);
             connectCartButtons();
 
-            // Re-observar elementos dinámicos y forzar visibilidad inicial
-            setTimeout(() => {
-                document.querySelectorAll('.fade-in-up').forEach(el => {
-                    observer.observe(el);
-                    // Forzamos un pequeño check para elementos ya visibles en pantalla
-                    const rect = el.getBoundingClientRect();
-                    if (rect.top < window.innerHeight) {
-                        el.classList.add('visible');
-                    }
-                });
+            // Re-observar elementos dinámicos y forzar visibilidad inicial de manera inmediata y fluida
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    document.querySelectorAll('.fade-in-up').forEach(el => {
+                        observer.observe(el);
+                        // Forzamos un pequeño check para elementos ya visibles en pantalla
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top < window.innerHeight) {
+                            el.classList.add('visible');
+                        }
+                    });
 
-                // Iniciar crossfade en todos los videos de featured
-                setupCrossfadeLoops();
-            }, 150);
+                    // Iniciar crossfade en todos los videos de featured
+                    setupCrossfadeLoops();
+                });
+            });
         });
 
         // --- Animaciones de Scroll ---
@@ -824,12 +866,7 @@
         document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
         sectionsWithMantel.forEach(section => mantelObserver.observe(section));
 
-        // Parallax del mantel
-        window.addEventListener('scroll', () => {
-            if (mantel.classList.contains('visible')) {
-                mantel.style.backgroundPositionY = `${window.scrollY * 0.5}px`;
-            }
-        });
+        // Parallax del mantel desactivado (el fondo permanece fijo)
 
         // --- Manejo del Toggle Veggie ---
         function handleVeggieToggle(productId) {
