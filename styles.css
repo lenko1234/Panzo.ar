@@ -1744,12 +1744,19 @@
 
         .nd-title {
             font-family: 'Extenda Peta', sans-serif;
-            font-size: clamp(3.5rem, 13vw, 10rem); 
+            font-size: clamp(1.6rem, 8.5vw, 10rem); 
             color: var(--nd-card-bg);
             text-align: center;
             margin: 0; /* Sin márgenes para centrar bien */
-            line-height: 0.75;
+            line-height: 0.85;
             text-transform: uppercase;
+            max-width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            .nd-title {
+                font-size: clamp(1.5rem, 8.2vw, 2.8rem);
+            }
         }
 
         .nd-grid {
