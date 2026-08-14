@@ -40,6 +40,13 @@ export const burger = defineType({
       },
     }),
     defineField({
+      name: 'hasBackground',
+      title: '¿La foto tiene fondo? (Enmarcar)',
+      type: 'boolean',
+      description: 'Activá esto si la foto tiene fondo (estudio/mesa) para que se encuadre dentro del marco sin desbordar. Dejalo apagado si es PNG transparente (sticker flotante).',
+      initialValue: false,
+    }),
+    defineField({
       name: 'variants',
       title: 'Variantes',
       type: 'array',

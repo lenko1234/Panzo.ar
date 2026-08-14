@@ -28,7 +28,7 @@
     <!-- Iconos Phosphor (carga diferida) -->
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=framedphoto">
 </head>
 
 <body>
@@ -302,7 +302,8 @@
                 id: 101,
                 name: "LA TRAICIÓN",
                 ingredients: "Pan, doble medallón de 120gr, bacon, doble cheddar por medallón, cebolla y nuestra salsa golf especial.",
-                image: "assets/new design/traicion.webp",
+                image: "",
+                bgImage: "assets/new design/traicion.webp",
                 logo: "assets/logo-panzo.webp",
                 variants: [
                     { type: "Doble", price: 14799 },
@@ -376,6 +377,16 @@
         let encargues = [];
         const sanguches = [];
 
+        // Helper para optimización automática a WebP y compresión inteligente en CDN de Sanity
+        function optimizeSanityImage(url, width = 1200, quality = 85) {
+            if (!url || typeof url !== 'string') return url;
+            if (url.includes('cdn.sanity.io')) {
+                const separator = url.includes('?') ? '&' : '?';
+                return `${url}${separator}auto=format&w=${width}&q=${quality}`;
+            }
+            return url;
+        }
+
         // --- FETCH DYNAMIC MENU FROM SANITY.IO ---
         async function fetchMenuFromSanity() {
             const PROJECT_ID = 'zq23sglj';
@@ -385,6 +396,7 @@
                     id,
                     name,
                     ingredients,
+                    hasBackground,
                     "image": image.asset->url,
                     variants[] {
                         type,
@@ -418,9 +430,28 @@
                 if (result.result) {
                     // Usamos los datos de Sanity tal cual — aunque estén vacíos.
                     // El backup solo se activa si Sanity no responde (catch).
-                    hamburguesas = result.result.hamburguesas ?? hamburguesasBackup;
-                    bebidas     = result.result.bebidas     ?? bebidasBackup;
-                    encargues   = result.result.encargues   ?? encarguesBackup;
+                    const rawBurgers = result.result.hamburguesas ?? hamburguesasBackup;
+                    hamburguesas = rawBurgers.map(b => ({
+                        ...b,
+                        image: optimizeSanityImage(b.image, 1000, 85),
+                        bgImage: optimizeSanityImage(b.bgImage, 1200, 85)
+                    }));
+
+                    // Previsualización local de la nueva imagen de La Traición (solo foto original encuadrada)
+                    const traicion = hamburguesas.find(b => b.name && (b.name.toUpperCase().includes('TRAICION') || b.name.toUpperCase().includes('TRAICIÓN')));
+                    if (traicion) {
+                        traicion.bgImage = "assets/new design/traicion.webp";
+                        traicion.image = "";
+                        traicion.hasBackground = true;
+                    }
+
+                    const rawBebidas = result.result.bebidas ?? bebidasBackup;
+                    bebidas = rawBebidas.map(b => ({
+                        ...b,
+                        image: optimizeSanityImage(b.image, 800, 85)
+                    }));
+
+                    encargues = result.result.encargues ?? encarguesBackup;
                     console.log(`Menú cargado desde Sanity: ${hamburguesas.length} burgers, ${bebidas.length} bebidas, ${encargues.length} encargues.`);
                 } else {
                     throw new Error("No se devolvieron resultados");
@@ -448,6 +479,10 @@
             const grid = document.getElementById('hamburguesas-grid');
             const placeholder = document.getElementById('hamburguesas-placeholder');
 
+            // Limpiar productos previos
+            const existingCards = grid.querySelectorAll('.nd-card');
+            existingCards.forEach(c => c.remove());
+
             if (hamburguesas.length > 0) {
                 placeholder.style.display = 'none';
             }
@@ -465,13 +500,24 @@
                 // Limpiar ingredientes: buscar números y envolverlos en Archivo Black para legibilidad
                 const readableIngredients = hamburguesa.ingredients.replace(/(\d+)/g, '<span style="font-family: \'Archivo Black\', sans-serif; font-size: 1.1em; letter-spacing: 0;">$1</span>');
 
+                const isFramed = Boolean(hamburguesa.hasBackground || hamburguesa.bgImage);
+                const bgSrc = hamburguesa.bgImage || (hamburguesa.hasBackground ? hamburguesa.image : null);
+                const stickerSrc = !hamburguesa.hasBackground ? hamburguesa.image : null;
+
                 card.innerHTML = `
                     <div class="nd-card-header">
                         <img src="${hamburguesa.logo || 'assets/logo-panzo.webp'}" alt="Panzo" class="nd-card-logo" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
                     </div>
                     <div class="nd-card-inner">
+                        ${isFramed && bgSrc ? `
+                        <div class="nd-card-bg-frame">
+                            <img src="${bgSrc}" alt="${hamburguesa.name}" class="nd-card-bg-image" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+                        </div>
+                        ` : ''}
                         <h2 class="nd-card-title">${hamburguesa.name}</h2>
-                        <img src="${hamburguesa.image}" alt="${hamburguesa.name}" class="nd-card-image ${hamburguesa.id === 109 || (hamburguesa.name && hamburguesa.name.toUpperCase().includes('PAPAS')) ? 'img-papas' : ''}" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+                        ${stickerSrc ? `
+                        <img src="${stickerSrc}" alt="${hamburguesa.name}" class="nd-card-image ${hamburguesa.id === 109 || (hamburguesa.name && hamburguesa.name.toUpperCase().includes('PAPAS')) ? 'img-papas' : ''}" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+                        ` : ''}
                         <p class="nd-card-ingredients">${readableIngredients}</p>
                     </div>
                     <div class="nd-card-footer">
@@ -509,6 +555,10 @@
                 const img = card.querySelector('.nd-card-image');
                 if (img && img.complete) {
                     img.classList.add('loaded');
+                }
+                const bgImg = card.querySelector('.nd-card-bg-image');
+                if (bgImg && bgImg.complete) {
+                    bgImg.classList.add('loaded');
                 }
                 const logo = card.querySelector('.nd-card-logo');
                 if (logo && logo.complete) {
