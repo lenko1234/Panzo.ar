@@ -17,11 +17,11 @@
 
     <!-- Preload de fuente crítica para LCP -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Open+Sans:wght@500;600;700&family=Space+Grotesk:wght@500;700;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Open+Sans:wght@500;600;700&family=Poppins:wght@300;400;500&family=Space+Grotesk:wght@500;700;900&display=swap"
         rel="stylesheet" media="print" onload="this.media='all'">
     <noscript>
         <link
-            href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Open+Sans:wght@500;600;700&family=Space+Grotesk:wght@500;700;900&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Bebas+Neue&family=Open+Sans:wght@500;600;700&family=Poppins:wght@300;400;500&family=Space+Grotesk:wght@500;700;900&display=swap"
             rel="stylesheet">
     </noscript>
 
@@ -57,11 +57,12 @@
         <section id="menu" class="feed-section" style="padding-bottom: var(--space-16);">
             <div class="container">
                 <div class="section-header">
-                    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-1); width: 100%;">
+                    <div
+                        style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--space-1); width: 100%;">
                         <h2 class="nd-title fade-in-up">HAMBURGUESAS</h2>
                         <p class="fade-in-up"
                             style="color: rgba(255,255,255,0.5); font-size: 0.9rem; font-family: 'Space Grotesk', sans-serif; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; text-align: center;">
-                            todas las hamburguesas incluyen papas</p>
+                            todas incluyen papas</p>
                     </div>
                 </div>
             </div>
@@ -460,8 +461,8 @@
                 // Solo llega acá si hubo error de red o Sanity está caído
                 console.error("Error al conectar con Sanity. Usando base de datos local de respaldo:", error);
                 hamburguesas = hamburguesasBackup;
-                bebidas      = bebidasBackup;
-                encargues    = encarguesBackup;
+                bebidas = bebidasBackup;
+                encargues = encarguesBackup;
             }
         }
 
@@ -498,14 +499,16 @@
                 card.style.transitionDelay = `${(index + 1) * 100}ms`;
 
                 // Limpiar ingredientes: buscar números y envolverlos en Archivo Black para legibilidad
-                const readableIngredients = hamburguesa.ingredients.replace(/(\d+)/g, '<span style="font-family: \'Archivo Black\', sans-serif; font-size: 1.1em; letter-spacing: 0;">$1</span>');
+                const readableIngredients = hamburguesa.ingredients ? hamburguesa.ingredients.replace(/(\d+)/g, '<span style="font-family: \'Archivo Black\', sans-serif; font-size: 1.1em; letter-spacing: 0;">$1</span>') : '';
 
-                const isFramed = Boolean(hamburguesa.hasBackground || hamburguesa.bgImage);
-                const bgSrc = hamburguesa.bgImage || (hamburguesa.hasBackground ? hamburguesa.image : null);
-                const stickerSrc = !hamburguesa.hasBackground ? hamburguesa.image : null;
+                const isFramed = hamburguesa.hasBackground !== false && Boolean(hamburguesa.image || hamburguesa.bgImage);
+                const bgSrc = hamburguesa.bgImage || (isFramed ? hamburguesa.image : null);
+                const stickerSrc = !isFramed ? hamburguesa.image : null;
+                const hasIngredients = Boolean(hamburguesa.ingredients && hamburguesa.ingredients.trim() !== '');
+                const isCombo = Boolean(hamburguesa.name && (hamburguesa.name.toUpperCase().includes('COMBO CLÁSICA') || hamburguesa.name.toUpperCase().includes('COMBO CLASICA')) || hamburguesa.id === 108);
 
                 card.innerHTML = `
-                    <div class="nd-card-inner">
+                    <div class="nd-card-inner ${hasIngredients ? '' : 'no-ingredients'} ${isCombo ? 'is-combo' : ''}">
                         ${isFramed && bgSrc ? `
                         <div class="nd-card-bg-frame">
                             <img src="${bgSrc}" alt="${hamburguesa.name}" class="nd-card-bg-image" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
@@ -515,7 +518,7 @@
                         ${stickerSrc ? `
                         <img src="${stickerSrc}" alt="${hamburguesa.name}" class="nd-card-image ${hamburguesa.id === 109 || (hamburguesa.name && hamburguesa.name.toUpperCase().includes('PAPAS')) ? 'img-papas' : ''}" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
                         ` : ''}
-                        <p class="nd-card-ingredients">${readableIngredients}</p>
+                        ${hasIngredients ? `<p class="nd-card-ingredients">${readableIngredients}</p>` : ''}
                     </div>
                     <div class="nd-card-footer">
                         ${hamburguesa.variants.map((variant, vIndex) => `
@@ -824,7 +827,7 @@
             // Limpiar grids e inicializar renders
             if (hGrid) hGrid.innerHTML = '';
             if (bGrid) bGrid.innerHTML = '';
-            
+
             // Eliminar encargues renderizados anteriormente para evitar duplicados
             document.querySelectorAll('.encargue-item').forEach(el => el.remove());
 

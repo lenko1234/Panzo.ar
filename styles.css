@@ -1761,11 +1761,12 @@
 
         .nd-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 40px;
             width: 100%;
-            margin: 0; /* Ya está centrado por el contenedor padre */
+            margin: 0 auto;
             padding: 0;
+            box-sizing: border-box;
         }
 
         @media (max-width: 800px) {
@@ -1781,6 +1782,9 @@
             display: flex;
             flex-direction: column;
             border-radius: 4px;
+            min-width: 0;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .nd-card-header {
@@ -1813,8 +1817,35 @@
             border-radius: 4px;
             flex: 1;
             position: relative;
-            min-height: 230px;
+            min-height: 380px;
             overflow: visible;
+            min-width: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .nd-card-inner.no-ingredients {
+            min-height: 230px;
+        }
+
+        .nd-card-inner.no-ingredients .nd-card-bg-image {
+            object-position: center center;
+        }
+
+        .nd-card-inner.is-combo {
+            min-height: 330px;
+        }
+
+        .nd-card-inner.is-combo .nd-card-bg-image {
+            object-fit: contain;
+            object-position: center 32%;
+            transform: scale(1.85);
+        }
+
+        .nd-card-inner.is-combo .nd-card-ingredients {
+            color: #ffffff;
+            font-size: 0.8rem;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
         }
 
         .nd-card-bg-frame {
@@ -1830,6 +1861,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center 25%;
             opacity: 0;
             transition: opacity 0.4s ease-out;
         }
@@ -1841,15 +1873,17 @@
         .nd-card-title {
             font-family: 'Yellowtail', cursive;
             color: var(--nd-card-bg);
-            font-size: clamp(2rem, 6.6vw, 4.2rem); /* Potenciado */
+            font-size: clamp(1.8rem, 4vw, 3.8rem);
             text-align: center;
             margin: 0;
-            line-height: 0.8;
+            line-height: 0.9;
             font-weight: normal;
             position: relative;
             z-index: 5;
-            top: -0.3em;
-            white-space: nowrap;
+            top: -0.2em;
+            white-space: normal;
+            word-break: break-word;
+            max-width: 100%;
             text-shadow:
                 -2px -2px 0 var(--nd-bg),
                 2px -2px 0 var(--nd-bg),
@@ -1863,11 +1897,11 @@
 
         .nd-card-image {
             position: absolute;
-            top: 50%;
+            top: 40%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(2.5);
+            transform: translate(-50%, -50%) scale(2.2);
             width: 100%;
-            max-height: 180px;
+            max-height: 200px;
             object-fit: contain;
             z-index: 3;
             pointer-events: none;
@@ -1881,21 +1915,24 @@
         }
 
         .nd-card-image.img-papas {
-            transform: translate(-50%, -65%) scale(2.5);
+            transform: translate(-50%, -60%) scale(2.2);
         }
 
         .nd-card-ingredients {
-            font-family: 'Extenda Peta', sans-serif;
-            color: var(--nd-card-bg);
-            font-size: 0.7rem;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+            color: #ba2c24;
+            font-size: 0.78rem;
             text-align: center;
             text-transform: uppercase;
-            line-height: 1.1;
+            line-height: 1.25;
             margin-top: auto;
             position: relative;
             z-index: 5;
-            padding-bottom: 5px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.7);
+            padding: 8px 12px 12px 12px;
+            text-shadow: none;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .nd-card-footer {
