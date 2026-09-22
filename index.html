@@ -12,8 +12,14 @@
     <!-- Preconexiones para recursos críticos -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://zq23sglj.apicdn.sanity.io" crossorigin>
+    <link rel="preconnect" href="https://cdn.sanity.io" crossorigin>
     <link rel="dns-prefetch" href="https://unpkg.com">
-    <link rel="dns-prefetch" href="https://images.unsplash.com">
+
+    <!-- Mismas fuentes y logo, priorizados para evitar que aparezcan tarde -->
+    <link rel="preload" href="assets/new design/EXTENDA-80-PETA-TRIAL.TTF" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="assets/new design/Yellowtail-Regular.ttf" as="font" type="font/ttf" crossorigin>
+    <link rel="preload" href="assets/logo-panzo.webp" as="image" type="image/webp">
 
     <!-- Preload de fuente crítica para LCP -->
     <link
@@ -28,20 +34,20 @@
     <!-- Iconos Phosphor (carga diferida) -->
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
-    <link rel="stylesheet" href="styles.css?v=framedphoto">
+    <link rel="stylesheet" href="styles.css?v=render-performance">
 </head>
 
 <body>
 
     <!-- MANTEL INFINITO (Controlado por JS) -->
-    <div id="mantel-bg" class="mantel-bg"></div>
+    <div id="mantel-bg" class="mantel-bg visible"></div>
 
     <!-- NAV -->
     <header class="header" id="header">
         <div class="container nav-wrapper">
             <!-- Logo estilo Rubik (Bubbly) -->
             <a href="#" class="logo" style="position: relative; z-index: 10;">
-                <img src="assets/logo-panzo.webp" alt="Panzo Logo" loading="eager"
+                <img src="assets/logo-panzo.webp" alt="Panzo Logo" loading="eager" width="543" height="269"
                     style="height: 40px; width: auto; filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.5));">
             </a>
 
@@ -68,8 +74,16 @@
             </div>
 
             <div class="container has-mantel"> <!-- Usamos el mismo container para alinear perfecto con el título -->
-                <div class="nd-grid" id="hamburguesas-grid">
-                    <!-- Las tarjetas se generarán dinámicamente con JavaScript -->
+                <div class="nd-grid is-loading" id="hamburguesas-grid" aria-busy="true">
+                    <!-- Reserva la geometría final mientras llega Sanity para evitar CLS. -->
+                    <div class="nd-card nd-card-skeleton" aria-hidden="true"></div>
+                    <div class="nd-card nd-card-skeleton" aria-hidden="true"></div>
+                    <div class="nd-card nd-card-skeleton" aria-hidden="true"></div>
+                    <div class="nd-card nd-card-skeleton" aria-hidden="true"></div>
+                    <div class="nd-card nd-card-skeleton" aria-hidden="true"></div>
+                    <div class="nd-card nd-card-skeleton" aria-hidden="true"></div>
+                    <div class="nd-card nd-card-skeleton" aria-hidden="true"></div>
+                    <div class="nd-card nd-card-skeleton" aria-hidden="true"></div>
                 </div>
             </div>
 
@@ -175,7 +189,7 @@
     <footer class="footer">
         <div class="container">
             <a href="#" class="footer-logo">
-                <img src="assets/logo-panzo.webp" alt="Panzo Logo" loading="lazy"
+                <img src="assets/logo-panzo.webp" alt="Panzo Logo" loading="lazy" width="543" height="269"
                     style="height: 180px; width: auto; margin: 0 auto var(--space-6); filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.5));">
             </a>
             <div class="footer-links">
@@ -334,17 +348,6 @@
             },
         ];
 
-        const encarguesBackup = [
-            {
-                id: 201,
-                name: "LA BONDIOLA",
-                subtitle: "Los secretos de la bondiola",
-                ingredients: "Pan de focaccia con topping de trocitos de milan, bondiola desmechada a la cerveza, cebolla salteada, morrón y cebolla de verdeo con mayonesa de barbacoa.",
-                video: "assets/freepik_a-cinematic-product-showcase-of-a-wide-thick-sandw_kling_1080p_9-16_24fps_31479.mp4",
-                whatsappMsg: "Hola Panzo! Quiero hacer un encargue de LA BONDIOLA para mañana 🥖"
-            }
-        ];
-
         const bebidasBackup = [
             {
                 id: 5,
@@ -375,17 +378,24 @@
         // Variables activas
         let hamburguesas = [];
         let bebidas = [];
-        let encargues = [];
         const sanguches = [];
 
         // Helper para optimización automática a WebP y compresión inteligente en CDN de Sanity
         function optimizeSanityImage(url, width = 1200, quality = 85) {
             if (!url || typeof url !== 'string') return url;
             if (url.includes('cdn.sanity.io')) {
-                const separator = url.includes('?') ? '&' : '?';
-                return `${url}${separator}auto=format&w=${width}&q=${quality}`;
+                const optimizedUrl = new URL(url);
+                optimizedUrl.searchParams.set('auto', 'format');
+                optimizedUrl.searchParams.set('w', width);
+                optimizedUrl.searchParams.set('q', quality);
+                return optimizedUrl.toString();
             }
             return url;
+        }
+
+        function buildSanitySrcSet(url, widths = [360, 600, 800, 1000]) {
+            if (!url || !url.includes('cdn.sanity.io')) return '';
+            return widths.map(width => `${optimizeSanityImage(url, width, 85)} ${width}w`).join(', ');
         }
 
         // --- FETCH DYNAMIC MENU FROM SANITY.IO ---
@@ -411,20 +421,19 @@
                     "image": image.asset->url,
                     price,
                     icon
-                },
-                "encargues": *[_type == "encargue"] | order(order asc) {
-                    id,
-                    name,
-                    subtitle,
-                    ingredients,
-                    "video": video.asset->url,
-                    whatsappMsg
                 }
             }`);
             const url = `https://${PROJECT_ID}.apicdn.sanity.io/v2021-10-21/data/query/${DATASET}?query=${QUERY}`;
 
             try {
-                const response = await fetch(url);
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3500);
+                let response;
+                try {
+                    response = await fetch(url, { signal: controller.signal });
+                } finally {
+                    clearTimeout(timeoutId);
+                }
                 if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
                 const result = await response.json();
 
@@ -452,8 +461,7 @@
                         image: optimizeSanityImage(b.image, 800, 85)
                     }));
 
-                    encargues = result.result.encargues ?? encarguesBackup;
-                    console.log(`Menú cargado desde Sanity: ${hamburguesas.length} burgers, ${bebidas.length} bebidas, ${encargues.length} encargues.`);
+                    console.log(`Menú cargado desde Sanity: ${hamburguesas.length} burgers, ${bebidas.length} bebidas.`);
                 } else {
                     throw new Error("No se devolvieron resultados");
                 }
@@ -462,9 +470,12 @@
                 console.error("Error al conectar con Sanity. Usando base de datos local de respaldo:", error);
                 hamburguesas = hamburguesasBackup;
                 bebidas = bebidasBackup;
-                encargues = encarguesBackup;
             }
         }
+
+        // La consulta comienza apenas el parser llega al script. DOMContentLoaded reutiliza
+        // esta promesa en lugar de recién iniciar la red en ese momento.
+        const menuRequest = fetchMenuFromSanity();
 
         // --- Función para formatear precio (Movida arriba para disponibilidad global) ---
         function formatPrice(price) {
@@ -479,14 +490,16 @@
             console.log('Iniciando render de hamburguesas...');
             const grid = document.getElementById('hamburguesas-grid');
             const placeholder = document.getElementById('hamburguesas-placeholder');
+            const fragment = document.createDocumentFragment();
 
-            // Limpiar productos previos
-            const existingCards = grid.querySelectorAll('.nd-card');
-            existingCards.forEach(c => c.remove());
-
-            if (hamburguesas.length > 0) {
-                placeholder.style.display = 'none';
+            if (hamburguesas.length === 0) {
+                grid.replaceChildren();
+                grid.classList.remove('is-loading');
+                grid.setAttribute('aria-busy', 'false');
+                placeholder.style.display = 'block';
+                return;
             }
+            placeholder.style.display = 'none';
 
             hamburguesas.forEach((hamburguesa, index) => {
                 // Inicializar variante por defecto si no existe
@@ -496,7 +509,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'nd-card fade-in-up';
-                card.style.transitionDelay = `${(index + 1) * 100}ms`;
+                card.style.transitionDelay = `${Math.min(index * 60, 240)}ms`;
 
                 // Limpiar ingredientes: buscar números y envolverlos en Archivo Black para legibilidad
                 const readableIngredients = hamburguesa.ingredients ? hamburguesa.ingredients.replace(/(\d+)/g, '<span style="font-family: \'Archivo Black\', sans-serif; font-size: 1.1em; letter-spacing: 0;">$1</span>') : '';
@@ -506,17 +519,24 @@
                 const stickerSrc = !isFramed ? hamburguesa.image : null;
                 const hasIngredients = Boolean(hamburguesa.ingredients && hamburguesa.ingredients.trim() !== '');
                 const isCombo = Boolean(hamburguesa.name && (hamburguesa.name.toUpperCase().includes('COMBO CLÁSICA') || hamburguesa.name.toUpperCase().includes('COMBO CLASICA')) || hamburguesa.id === 108);
+                const imageLoading = index < 2 ? 'eager' : 'lazy';
+                const imagePriority = index === 0 ? ' fetchpriority="high"' : '';
+                const bgSrcSet = buildSanitySrcSet(bgSrc);
+                const stickerSrcSet = buildSanitySrcSet(stickerSrc);
+                const imageSizes = isCombo
+                    ? '(max-width: 800px) 700px, (max-width: 1400px) 60vw, 900px'
+                    : '(max-width: 800px) calc(100vw - 40px), (max-width: 1400px) calc(50vw - 60px), 660px';
 
                 card.innerHTML = `
                     <div class="nd-card-inner ${hasIngredients ? '' : 'no-ingredients'} ${isCombo ? 'is-combo' : ''}">
                         ${isFramed && bgSrc ? `
                         <div class="nd-card-bg-frame">
-                            <img src="${bgSrc}" alt="${hamburguesa.name}" class="nd-card-bg-image" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+                            <img src="${bgSrc}" ${bgSrcSet ? `srcset="${bgSrcSet}" sizes="${imageSizes}"` : ''} alt="${hamburguesa.name}" class="nd-card-bg-image" loading="${imageLoading}"${imagePriority} decoding="async">
                         </div>
                         ` : ''}
                         <h2 class="nd-card-title">${hamburguesa.name}</h2>
                         ${stickerSrc ? `
-                        <img src="${stickerSrc}" alt="${hamburguesa.name}" class="nd-card-image ${hamburguesa.id === 109 || (hamburguesa.name && hamburguesa.name.toUpperCase().includes('PAPAS')) ? 'img-papas' : ''}" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+                        <img src="${stickerSrc}" ${stickerSrcSet ? `srcset="${stickerSrcSet}" sizes="${imageSizes}"` : ''} alt="${hamburguesa.name}" class="nd-card-image ${hamburguesa.id === 109 || (hamburguesa.name && hamburguesa.name.toUpperCase().includes('PAPAS')) ? 'img-papas' : ''}" loading="${imageLoading}"${imagePriority} decoding="async">
                         ` : ''}
                         ${hasIngredients ? `<p class="nd-card-ingredients">${readableIngredients}</p>` : ''}
                     </div>
@@ -549,18 +569,12 @@
                     </button>
                 `;
 
-                grid.appendChild(card);
-
-                // Forzar clase loaded si la imagen ya está en cache
-                const img = card.querySelector('.nd-card-image');
-                if (img && img.complete) {
-                    img.classList.add('loaded');
-                }
-                const bgImg = card.querySelector('.nd-card-bg-image');
-                if (bgImg && bgImg.complete) {
-                    bgImg.classList.add('loaded');
-                }
+                fragment.appendChild(card);
             });
+            grid.replaceChildren(fragment);
+            grid.classList.remove('is-loading');
+            grid.setAttribute('aria-busy', 'false');
+            observeFadeElements(grid);
             console.log('Render de hamburguesas finalizado.');
         }
 
@@ -634,9 +648,11 @@
         // --- Renderizar Bebidas ---
         function renderBebidas() {
             const grid = document.getElementById('bebidas-grid');
+            const fragment = document.createDocumentFragment();
 
             if (bebidas.length === 0) {
                 // No hay bebidas en Sanity — la sección queda oculta
+                grid.replaceChildren();
                 return;
             }
 
@@ -647,7 +663,7 @@
             bebidas.forEach((bebida, index) => {
                 const card = document.createElement('article');
                 card.className = 'post-card'; // Sin fade-in-up para asegurar visibilidad
-                card.style.transitionDelay = `${(index + 1) * 100}ms`;
+                const imageSrcSet = buildSanitySrcSet(bebida.image, [320, 480, 640, 800]);
 
                 card.innerHTML = `
                     <div class="post-header">
@@ -656,7 +672,7 @@
                     </div>
                     <div class="post-img-container">
                         ${bebida.badge ? `<div class="badge-new">${bebida.badge}</div>` : ''}
-                        <img src="${bebida.image}" alt="${bebida.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async" onload="this.classList.add('loaded')">
+                        <img src="${bebida.image}" ${imageSrcSet ? `srcset="${imageSrcSet}" sizes="(max-width: 768px) calc(100vw - 40px), 400px"` : ''} alt="${bebida.name}" class="post-img" style="height: 100%; object-fit: cover;" loading="lazy" decoding="async">
                     </div>
                     <div class="post-footer">
                         <div class="post-actions">
@@ -678,183 +694,25 @@
                     </div>
                     `;
 
-                grid.appendChild(card);
-
-                // Forzar clase loaded si la imagen ya está en cache
-                const img = card.querySelector('.post-img');
-                if (img && img.complete) {
-                    img.classList.add('loaded');
-                }
+                fragment.appendChild(card);
             });
+            grid.replaceChildren(fragment);
         }
 
         // --- Renderizar Sanguches (vacío, mantenido por compatibilidad) ---
         function renderSanguches() { /* sin sanguches regulares */ }
 
-        // --- Renderizar Encargues ---
-        function renderEncargues() {
-            const container = document.getElementById('encargues-grid');
-            const WHATSAPP_NUMBER = '5492216817239';
-
-            if (encargues.length === 0) {
-                // No hay encargues en Sanity — la sección queda oculta
-                return;
-            }
-
-            // Mostrar la sección solo si hay encargues
-            const encarguesSection = document.getElementById('encargues-section');
-            if (encarguesSection) encarguesSection.style.display = '';
-
-            encargues.forEach((item, index) => {
-                const section = document.createElement('div');
-                section.className = 'featured-burger-section fade-in-up encargue-item';
-                section.style.transitionDelay = `${(index + 1) * 100}ms`;
-
-                const nameParts = item.name.split(' ');
-                const titleHtml = nameParts.length >= 3
-                    ? `<span>${nameParts.slice(0, -1).join(' ')}</span><span>${nameParts[nameParts.length - 1]}</span>`
-                    : `<span>${nameParts[0]}</span><span>${nameParts.slice(1).join(' ')}</span>`;
-
-                const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(item.whatsappMsg)}`;
-
-                section.innerHTML = `
-                    <div class="featured-media-container">
-                        <div class="video-loop-container">
-                            <video autoplay muted playsinline class="cf-active" preload="auto">
-                                <source src="${item.video}" type="video/mp4">
-                            </video>
-                            <video muted playsinline class="cf-inactive" preload="auto">
-                                <source src="${item.video}" type="video/mp4">
-                            </video>
-                        </div>
-                    </div>
-                    <div class="featured-content">
-                        <h2 class="featured-title">${titleHtml}</h2>
-                    </div>
-
-                    <p class="featured-tagline">${item.ingredients}</p>
-
-                    <div class="featured-purchase-bar encargue-purchase-bar">
-                        <div class="encargue-notice">
-                            <i class="ph-bold ph-clock"></i>
-                            <span>Pedido previo · entrega al día siguiente</span>
-                        </div>
-                        <a href="${waLink}" target="_blank" class="btn btn-encargue" style="width: 100%;">
-                            <i class="ph-bold ph-whatsapp-logo"></i> ENCARGAR AHORA
-                        </a>
-                    </div>
-                `;
-
-                container.parentNode.insertBefore(section, container);
-            });
-        }
-
-        // --- Crossfade seamless loop (sin oscurecimiento) ---
-        function setupCrossfadeLoops() {
-            document.querySelectorAll('.video-loop-container').forEach(container => {
-                const vids = container.querySelectorAll('video');
-                if (vids.length < 2) return;
-
-                let va = vids[0]; // activo (se ve)
-                let vb = vids[1]; // en espera (oculto)
-                let swapping = false;
-
-                // Estado inicial vía inline styles
-                va.style.cssText += ';position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:2;opacity:0;transition:opacity 0.5s ease;';
-                vb.style.cssText += ';position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;z-index:1;opacity:0;';
-
-                // Mostrar el primer video suavemente una vez que esté listo para reproducirse
-                const startPlaying = () => {
-                    va.style.opacity = '1';
-                };
-                if (va.readyState >= 3) {
-                    startPlaying();
-                } else {
-                    va.addEventListener('canplay', startPlaying, { once: true });
-                }
-
-                function swap() {
-                    if (swapping) return;
-                    swapping = true;
-
-                    // 1. Traer vb al frente (encima de va) a opacity 0, sin transición
-                    vb.style.transition = 'none';
-                    vb.style.zIndex = '3';
-                    vb.style.opacity = '0';
-                    vb.currentTime = 0;
-                    vb.play();
-
-                    // 2. En el siguiente frame, fade IN de vb (va sigue al 100% debajo → sin oscurecer)
-                    requestAnimationFrame(() => requestAnimationFrame(() => {
-                        vb.style.transition = 'opacity 1.2s ease';
-                        vb.style.opacity = '1';
-                    }));
-
-                    // 3. Después del fade, ocultar va (ya detrás de vb)
-                    setTimeout(() => {
-                        va.style.transition = 'none';
-                        va.style.opacity = '0';
-                        va.style.zIndex = '1';
-                        vb.style.zIndex = '2';
-                        vb.style.transition = '';
-                        [va, vb] = [vb, va];
-                        swapping = false;
-                    }, 1400);
-                }
-
-                // Disparar swap cuando el video activo le quedan ~1.5s
-                vids.forEach(v => {
-                    v.addEventListener('timeupdate', () => {
-                        if (v === va && v.duration && (v.duration - v.currentTime) <= 1.5) {
-                            swap();
-                        }
-                    });
-                });
-            });
-        }
-
         // --- Inicializar ---
         document.addEventListener('DOMContentLoaded', async () => {
-            // Mostrar estado de carga inicial en los grids (solo spinner, sin textos de carga)
-            const hGrid = document.getElementById('hamburguesas-grid');
-            const bGrid = document.getElementById('bebidas-grid');
-            if (hGrid) hGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: var(--space-10) var(--space-6); color: var(--color-brand);"><i class="ph-bold ph-spinner loading-spinner" style="font-size: 2rem;"></i></div>';
-            if (bGrid) bGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: var(--space-10) var(--space-6); color: var(--color-dark);"><i class="ph-bold ph-spinner loading-spinner" style="font-size: 2rem;"></i></div>';
-
-            // Cargar menú desde Sanity
-            await fetchMenuFromSanity();
-
-            // Limpiar grids e inicializar renders
-            if (hGrid) hGrid.innerHTML = '';
-            if (bGrid) bGrid.innerHTML = '';
-
-            // Eliminar encargues renderizados anteriormente para evitar duplicados
-            document.querySelectorAll('.encargue-item').forEach(el => el.remove());
+            // La red ya está en curso desde que el parser alcanzó este script.
+            await menuRequest;
 
             renderHamburguesas();
             renderSanguches();
-            renderEncargues();
             renderBebidas();
 
             console.log('Productos renderizados:', document.querySelectorAll('.post-card').length);
             connectCartButtons();
-
-            // Re-observar elementos dinámicos y forzar visibilidad inicial de manera inmediata y fluida
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    document.querySelectorAll('.fade-in-up').forEach(el => {
-                        observer.observe(el);
-                        // Forzamos un pequeño check para elementos ya visibles en pantalla
-                        const rect = el.getBoundingClientRect();
-                        if (rect.top < window.innerHeight) {
-                            el.classList.add('visible');
-                        }
-                    });
-
-                    // Iniciar crossfade en todos los videos de featured
-                    setupCrossfadeLoops();
-                });
-            });
         });
 
         // --- Animaciones de Scroll ---
@@ -869,24 +727,38 @@
             }
         });
 
-        // 2. Elementos que aparecen (Fade In Up)
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: "0px 0px -50px 0px"
-        };
-
         const mantel = document.getElementById('mantel-bg');
         const sectionsWithMantel = document.querySelectorAll('.has-mantel');
 
-        const observer = new IntersectionObserver((entries) => {
+        // Entradas suaves sin alterar la geometría: opacity/transform no generan CLS.
+        const fadeObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    if (entry.target.classList.contains('fade-in-up')) {
-                        entry.target.classList.add('visible');
-                    }
+                if (!entry.isIntersecting) return;
+                const element = entry.target;
+                const finishAnimation = () => {
+                    element.classList.remove('fade-in-up', 'visible');
+                    element.style.removeProperty('transition-delay');
+                };
+
+                element.classList.add('visible');
+                fadeObserver.unobserve(element);
+
+                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                    finishAnimation();
+                } else {
+                    element.addEventListener('transitionend', finishAnimation, { once: true });
                 }
             });
-        }, observerOptions);
+        }, {
+            threshold: 0.08,
+            rootMargin: '0px 0px -24px 0px'
+        });
+
+        function observeFadeElements(root = document) {
+            root.querySelectorAll('.fade-in-up:not(.visible)').forEach(element => {
+                fadeObserver.observe(element);
+            });
+        }
 
         // Observer especial para el mantel
         const mantelObserver = new IntersectionObserver((entries) => {
@@ -909,7 +781,7 @@
             }
         }, { threshold: 0.01 });
 
-        document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+        observeFadeElements();
         sectionsWithMantel.forEach(section => mantelObserver.observe(section));
 
         // Parallax del mantel desactivado (el fondo permanece fijo)
